@@ -7,7 +7,7 @@ import time
 import datetime
 import json
 
-rospy.init_node('talker')
+rospy.init_node('matan')
 
-nao_movements = rospy.Publisher('nao_movements', String, queue_size=10)
-nao_movements.publish('matan ')
+nao_movements = rospy.Publisher('to_nao', String, queue_size=10)
+nao_movements.publish('matan')
