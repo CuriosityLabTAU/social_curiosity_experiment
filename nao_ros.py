@@ -15,7 +15,6 @@ class NaoNode():
         self.robot_ip=_robot_ip
         self.node_name=_node_name
 
-<<<<<<< Updated upstream
     def start(self):
         rospy.init_node('nao_listener')
         # for i in range(self.number_of_robots):
@@ -42,11 +41,9 @@ class NaoNode():
         # eval(str("self." + action + "(1," + str(parameters) + ")"))
         print "here "
         print message.data
-=======
         try:
             #motionProxy
             self.motionProxy  = ALProxy("ALMotion", self.robot_ip, self.port)
->>>>>>> Stashed changes
 
             # postureProxy
             self.postureProxy = ALProxy("ALRobotPosture", self.robot_ip, self.port)
