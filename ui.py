@@ -11,8 +11,8 @@
 # import time
 import os
 # import threading
-# import rospy
-# from std_msgs.msg import String
+import rospy
+from std_msgs.msg import String
 # import threading
 # import json
 # from random import shuffle, sample
@@ -22,7 +22,6 @@ import os
 nao_info=[('192.168.0.100','left'),('192.168.0.100','center'),('192.168.0.100','center')]
 
 
-
 def run_main(subject_id,_nao_info):
     str_for_main=''
     for nao_inst in _nao_info:
@@ -30,7 +29,8 @@ def run_main(subject_id,_nao_info):
     os.system('python main.py ' + subject_id + ' ' + str_for_main[:-1])
 
 
-
 run_main('3',nao_info)
+publisher = rospy.Publisher ('the_flow', String, queue_size=10)
+publisher.publish('60')
 
 

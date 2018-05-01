@@ -5,8 +5,8 @@ import sys
 from nao_ros import NaoNode
 
 
-def intro(subject_id=0, nao_info=['192.168.0.100','1']):
-    #nao_info is a list of [nao_ip,nao_name]
+def intro(subject_id=0, nao_info=[('192.168.0.100','center1')]):
+
     start_working(subject_id, nao_info)
 
 
@@ -18,6 +18,10 @@ def start_working(subject_id, nao_info):
     #make the class instance for nao_ros
     def worker1(_nao):
         start_nao=NaoNode(_nao[0],_nao[1])
+
+    def worker2():
+        os.system('python dynamics.py'+' '+ str(len(nao_info)))
+
 
     # def worker1():
     #     os.system('roslaunch multi_camera_affdex multi_camera_affdex.launch')
@@ -42,10 +46,12 @@ def start_working(subject_id, nao_info):
         t1.start()
         threading._sleep(2.5)
 
-    # t2 = threading.Thread(target=worker2)
-    # t2.start()
-    # threading._sleep(0.2)
-    #
+    t2 = threading.Thread(target=worker2)
+    t2.start()
+    threading._sleep(0.2)
+
+
+
     # t3 = threading.Thread(target=worker3)
     # t3.start()
     # threading._sleep(0.2)
