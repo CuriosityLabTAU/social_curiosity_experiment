@@ -16,7 +16,7 @@ def intro(subject_id=0, nao_info=['192.168.0.100','1']):
 def start_working(subject_id, nao_info):
 
     #make the class instance for nao_ros
-    def worker1():
+    def worker1(): # TODO: Each NaoNode should be in a different thread
         for nao in nao_info:
             start_nao=NaoNode(nao[0],nao[1])
             start_nao.start()

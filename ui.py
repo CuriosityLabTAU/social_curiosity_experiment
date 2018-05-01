@@ -33,3 +33,14 @@ def run_main(subject_id,_nao_info):
 
 run_main('3',nao_info)
 
+
+#====
+# class dynamics():
+# function: robot1, robot2, friends[-1, 0, 1] ==> do behavior
+
+# matrix = None
+
+# run_dynamics:
+# -go over time steps
+# --- choose one item in the matrix --> robot1, robot2, friendship
+# --- do behavior
