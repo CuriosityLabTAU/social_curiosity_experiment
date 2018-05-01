@@ -13,18 +13,21 @@ class dynamics():
 
         self.matrix = np.random.random_integers(-1, 1, (3, 3))
 
+
+
+
         self.behaviors={-1:{
-                        "left":[],
-                        "center": [],
-                        "right": []  },
+                        "left":['social_curiosity/left_pos'],
+                        "center": ['social_curiosity/center_pos'],
+                        "right": ['social_curiosity/right_pos']},
                          0:{
-                        "left": [],
-                        "center": [],
-                        "right": []},
+                        "left": ['social_curiosity/left_pos'],
+                        "center": ['social_curiosity/center_pos'],
+                        "right": ['social_curiosity/right_pos']},
                          1:{
-                        "left": [],
-                        "center": [],
-                        "right": []},}
+                        "left": ['social_curiosity/left_pos'],
+                        "center": ['social_curiosity/center_pos'],
+                        "right": ['social_curiosity/right_pos']}}
 
         self.transformation={0:{1:'left',2:'center','h':'right',},
                              1:{0:'right',2:'left','h':'center'},
@@ -44,6 +47,8 @@ class dynamics():
             robots = self.choose_robot()
         return robots
 
+    def parse_behavior(self, _behavior=str):
+        return '{\"action\" : \"run_behavior\", \"parameters\" : [\"' + _behavior + '\", \"wait\"]}'
 
     def run_dynamics(self,time_for_interaction=60.0):
         starttime = time.time()
@@ -58,6 +63,6 @@ class dynamics():
 
             behavior=self.behaviors[relationship][side]
 
-            self.publisher[robots_for_stemp[0]].publish(behavior)
+            self.publisher[robots_for_stemp[0]].publish(self.parse_behavior(behavior))
 
             time.sleep(2)
