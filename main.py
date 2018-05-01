@@ -16,10 +16,8 @@ def intro(subject_id=0, nao_info=['192.168.0.100','1']):
 def start_working(subject_id, nao_info):
 
     #make the class instance for nao_ros
-    def worker1(): # TODO: Each NaoNode should be in a different thread
-        for nao in nao_info:
-            start_nao=NaoNode(nao[0],nao[1])
-            start_nao.start()
+    def worker1(_nao):
+        start_nao=NaoNode(_nao[0],_nao[1])
 
     # def worker1():
     #     os.system('roslaunch multi_camera_affdex multi_camera_affdex.launch')
@@ -38,10 +36,12 @@ def start_working(subject_id, nao_info):
     # def worker7():
     #     os.system('python curious_game/skeleton_angles.py')
 
-    t1 = threading.Thread(target=worker1)
-    t1.start()
-    threading._sleep(2.5)
-    #
+
+    for nao in nao_info:
+        t1 = threading.Thread(target=worker1,args=(nao,))
+        t1.start()
+        threading._sleep(2.5)
+
     # t2 = threading.Thread(target=worker2)
     # t2.start()
     # threading._sleep(0.2)

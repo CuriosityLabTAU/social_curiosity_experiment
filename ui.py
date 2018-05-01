@@ -19,7 +19,7 @@ import os
 # import sys
 # import datetime
 
-nao_info=[('192.168.0.100','left'),('192.168.0.100','center')]
+nao_info=[('192.168.0.100','left'),('192.168.0.100','center'),('192.168.0.100','center')]
 
 
 

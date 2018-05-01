@@ -24,23 +24,6 @@ class NaoNode():
         rospy.Subscriber('to_nao', String, self.parse_message)
         rospy.spin()
 
-    def parse_message(self, message):
-        # # message is json string in the form of:  {'action': 'run_behavior', 'parameters': ["movements/introduction_all_0",...]}
-        # # eval the action and run with parameters.
-        # # For example, eval result could look like: self,say_text_to_speech(['hello','how are you?'])
-        # message = str(message.data)
-        # # print("parse_message", message)
-        # message_dict = json.loads(message)
-        # action = str(message_dict['action'])
-        # if 'parameters' in message_dict:
-        #     parameters = message_dict['parameters']
-        # else:
-        #     parameters = ""
-        # print("PARSE_MESSAGE")
-        # print(str("self." + action + "(1," + str(parameters) + ")"))
-        # eval(str("self." + action + "(1," + str(parameters) + ")"))
-        print "here "
-        print message.data
         try:
             #motionProxy
             self.motionProxy  = ALProxy("ALMotion", self.robot_ip, self.port)
@@ -65,7 +48,7 @@ class NaoNode():
             print "Error was: ",e
             sys.exit(1)
 
-    def start(self):
+        #ros:
         rospy.init_node('nao_listener'+self.node_name)
         name='to_nao'+self.node_name
         rospy.Subscriber(name, String, self.parse_message)
@@ -156,13 +139,3 @@ class NaoNode():
         print("say_text_to_animated_speech", text)
         self.animatedSpeech.say(text, {"pitchShift": pitch})
 
-
-
-# # ===== start the program =======
-# # if len(sys.argv) > 1:
-# #     nao = NaoNode(sys.argv[1])
-# # else:
-# #     nao = NaoNode()
-#
-#
-# nao.start()
