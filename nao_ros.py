@@ -15,15 +15,6 @@ class NaoNode():
         self.robot_ip=_robot_ip
         self.node_name=_node_name
 
-    def start(self):
-        rospy.init_node('nao_listener')
-        # for i in range(self.number_of_robots):
-        #     name='to_nao_'+str(i+1)
-        #     print name
-            # rospy.Subscriber(name, String, self.parse_message)
-        rospy.Subscriber('to_nao', String, self.parse_message)
-        rospy.spin()
-
         try:
             #motionProxy
             self.motionProxy  = ALProxy("ALMotion", self.robot_ip, self.port)
@@ -54,7 +45,7 @@ class NaoNode():
         rospy.Subscriber(name, String, self.parse_message)
         rospy.spin()
 
-    def parse_message_1(self, message):
+    def parse_message(self, message):
         # message is json string in the form of:  {'action': 'run_behavior', 'parameters': ["movements/introduction_all_0",...]}
         # eval the action and run with parameters.
         # For example, eval result could look like: self,say_text_to_speech(['hello','how are you?'])
