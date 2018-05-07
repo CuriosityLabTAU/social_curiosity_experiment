@@ -2,6 +2,7 @@ import numpy as np
 import time
 import rospy
 from std_msgs.msg import String
+import sys
 
 
 class dynamics():
@@ -40,7 +41,8 @@ class dynamics():
             name = 'to_nao' + self.position[nao]
             self.publisher[nao]=rospy.Publisher(name, String, queue_size=10)
 
-        rospy.Subscriber('the_flow', String, self.run_dynamics())
+        rospy.Subscriber('the_flow', String, self.run_dynamics)
+        print 'spin '+str(number_of_naos)
         rospy.spin()
 
     def choose_robot(self):
@@ -53,9 +55,10 @@ class dynamics():
         return '{\"action\" : \"run_behavior\", \"parameters\" : [\"' + _behavior + '\", \"wait\"]}'
 
     def run_dynamics(self,data):
+        print data.data
         starttime = time.time()
 
-        time_for_interaction= flout(data.data)
+        time_for_interaction= float(data.data)
 
         while time.time() -starttime <time_for_interaction:
             robots_for_stemp=self.choose_robot()

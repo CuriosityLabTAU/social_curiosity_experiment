@@ -2,7 +2,6 @@ import os
 import threading
 import time
 import sys
-from nao_ros import NaoNode
 
 
 def intro(subject_id=0, nao_info=[('192.168.0.100','center1')]):
@@ -17,7 +16,7 @@ def start_working(subject_id, nao_info):
 
     #make the class instance for nao_ros
     def worker1(_nao):
-        start_nao=NaoNode(_nao[0],_nao[1])
+        os.system('python nao_ros.py' + ' '+ _nao[0]+' '+_nao[1])
 
     def worker2():
         os.system('python dynamics.py'+' '+ str(len(nao_info)))
@@ -47,8 +46,8 @@ def start_working(subject_id, nao_info):
         threading._sleep(2.5)
 
     t2 = threading.Thread(target=worker2)
-    t2.start()
-    threading._sleep(0.2)
+    # t2.start()
+    # threading._sleep(0.2)
 
 
 

@@ -26,13 +26,13 @@ class NaoNode():
             self.animatedSpeech = ALProxy("ALAnimatedSpeech", self.robot_ip, self.port)
 
             # managerProxy
-            self.managerProxy = ALProxy("ALBehaviorManager", self.robotIP, self.port)
+            self.managerProxy = ALProxy("ALBehaviorManager", self.robot_ip, self.port)
 
             #texttospeech
-            self.tts = ALProxy("ALTextToSpeech", self.robotIP, self.port)
+            self.tts = ALProxy("ALTextToSpeech", self.robot_ip, self.port)
 
             #trackerProxy
-            self.trackerProxy = ALProxy("ALTracker", self.robotIP, self.port)
+            self.trackerProxy = ALProxy("ALTracker", self.robot_ip, self.port)
 
         except Exception,e:
             print "Could not create proxy "
@@ -130,3 +130,4 @@ class NaoNode():
         print("say_text_to_animated_speech", text)
         self.animatedSpeech.say(text, {"pitchShift": pitch})
 
+strat=NaoNode(sys.argv[1],sys.argv[2])

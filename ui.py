@@ -18,8 +18,12 @@ from std_msgs.msg import String
 # from random import shuffle, sample
 # import sys
 # import datetime
+import threading
+import time
 
-nao_info=[('192.168.0.100','left'),('192.168.0.100','center'),('192.168.0.100','center')]
+
+
+nao_info=[('192.168.0.102','left'),('192.168.0.106','center'),('192.168.0.101','right')]
 
 
 def run_main(subject_id,_nao_info):
@@ -29,8 +33,16 @@ def run_main(subject_id,_nao_info):
     os.system('python main.py ' + subject_id + ' ' + str_for_main[:-1])
 
 
-run_main('3',nao_info)
+# t1 = threading.Thread(target=run_main, args=('3',nao_info))
+# t1.start()
+# threading._sleep(25)
+
+rospy.init_node('ui')
 publisher = rospy.Publisher ('the_flow', String, queue_size=10)
+
+print 'here-ui'
 publisher.publish('60')
+
+print '--'
 
 
