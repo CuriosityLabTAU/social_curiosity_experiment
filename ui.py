@@ -33,16 +33,26 @@ def run_main(subject_id,_nao_info):
     os.system('python main.py ' + subject_id + ' ' + str_for_main[:-1])
 
 
-# t1 = threading.Thread(target=run_main, args=('3',nao_info))
-# t1.start()
-# threading._sleep(25)
+t1 = threading.Thread(target=run_main, args=('3',nao_info))
+t1.start()
+threading._sleep(25)
 
 rospy.init_node('ui')
 publisher = rospy.Publisher ('the_flow', String, queue_size=10)
 
+threading._sleep(5)
+
+
 print 'here-ui'
 publisher.publish('60')
 
+threading._sleep(5)
+
 print '--'
 
+
+
+#todo: iu
+#todo: basein bhavuer
+#todo: stop after bhavuer
 
