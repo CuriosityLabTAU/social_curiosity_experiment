@@ -14,12 +14,17 @@ def intro(subject_id=0, nao_info=[('192.168.0.100','center1')]):
 
 def start_working(subject_id, nao_info):
 
+    def worker1():
+        os.system('roscore')
+
     #make the class instance for nao_ros
-    def worker1(_nao):
+    def worker2(_nao):
         os.system('python nao_ros.py' + ' '+ _nao[0]+' '+_nao[1])
 
-    def worker2():
+    def worker3():
         os.system('python dynamics.py'+' '+ str(len(nao_info)))
+
+
 
 
     # def worker1():
@@ -40,13 +45,17 @@ def start_working(subject_id, nao_info):
     #     os.system('python curious_game/skeleton_angles.py')
 
 
+    t1 = threading.Thread(target=worker1)
+    t1.start()
+    threading._sleep(0.2)
+
     for nao in nao_info:
-        t1 = threading.Thread(target=worker1,args=(nao,))
-        t1.start()
+        t2 = threading.Thread(target=worker2,args=(nao,))
+        t2.start()
         threading._sleep(2.5)
 
-    t2 = threading.Thread(target=worker2)
-    # t2.start()
+    t3 = threading.Thread(target=worker3)
+    # t3.start()
     # threading._sleep(0.2)
 
 

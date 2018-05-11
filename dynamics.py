@@ -79,3 +79,38 @@ if len(sys.argv) > 1:
 else:
     start=dynamics(3)
 
+    # BoxLayout:
+    #     size_hint_y:0.05
+    #     Label:
+    #         padding_x: self.width/3
+    #         text:"Subject ID"
+    #         font_size:20
+    #         color:0,0,0,1
+    #     TextInput:
+    #         id:subject_id
+    #         padding_x: self.width/3
+    #         padding_y: ( self.height - self.line_height ) / 2.5
+    #         text:"0"
+    #         font_size:20
+    #         color:0,0,0,1
+    #
+    # BoxLayout:
+    #     size_hint_y:0.05
+    #     Button:
+    #         text:"Start"
+    #         color:0,0,0,1
+    #         font_size:30
+    #         bold: True
+    #         on_press: self.background_color = (1,0,0,1)
+    #         on_release: app.btn_released(self, app.start ,subject_id,nao_ip)  # function to be called when button is pressed
+
+    #
+    # BoxLayout:
+    #     size_hint_y:0.05
+    #     padding:'5dp'
+    #     spacing:'5dp'
+    #     Label:
+    #         text:'SetUp screen'
+    #         font_size:30
+    #
+    #         color:0,0,0,1
