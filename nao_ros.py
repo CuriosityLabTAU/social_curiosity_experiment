@@ -41,7 +41,8 @@ class NaoNode():
 
         #ros:
         rospy.init_node('nao_listener'+self.node_name)
-        name='to_nao'+self.node_name
+        name='to_nao_'+self.node_name
+        self.publisher= rospy.Publisher('angles', String, queue_size=10)
         rospy.Subscriber(name, String, self.parse_message)
         # rospy.spin()    #FOR TEST!!!!!!!!!!
 
@@ -132,7 +133,8 @@ class NaoNode():
         print("say_text_to_animated_speech", text)
         self.animatedSpeech.say(text, {"pitchShift": pitch})
 
-    def get_angles(self):
+    def get_angles(self,parameters):
+        caller=self.node_name+','+parameters
         names = "Body"
         use_sensors = False
         print("get_angles")
@@ -140,6 +142,14 @@ class NaoNode():
         print(str(self.motionProxy.getAngles(names, use_sensors)))
         use_sensors = True
         print "Sensor angeles:"
-        return self.motionProxy.getAngles(names, use_sensors),self.motionProxy.getBodyNames(names)
+        # string_to_pub = json.dumps([[caller], self.motionProxy.getAngles(names, use_sensors),self.motionProxy.getBodyNames(names)])
+        string_to_pub = json.dumps([[caller],self.motionProxy.getAngles(names, use_sensors)])
+
+        self.publisher.publish(string_to_pub)
+
+
+
 
 # strat=NaoNode(sys.argv[1],sys.argv[2])  #FOR TEST!!!!!!!!!!
+
+# strat=NaoNode('192.168.0.100','left')  #FOR TEST!!!!!!!!!!

@@ -12,7 +12,7 @@ import time
 import os
 import threading
 import rospy
-from std_msgs.msg import String
+from std_msgs.msg import String,Int32,Int32MultiArray,MultiArrayLayout,MultiArrayDimension
 import threading
 import json
 from random import shuffle, sample

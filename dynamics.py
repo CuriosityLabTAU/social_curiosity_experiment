@@ -3,6 +3,10 @@ import time
 import rospy
 from std_msgs.msg import String
 import sys
+import json
+import random
+from nao_ros import NaoNode
+nao=NaoNode('192.168.0.100','left')
 
 
 class dynamics():
@@ -38,12 +42,14 @@ class dynamics():
         rospy.init_node('dynamics')
         self.publisher ={}
         for nao in range(number_of_naos):
-            name = 'to_nao' + self.position[nao]
-            self.publisher[nao]=rospy.Publisher(name, String, queue_size=10)
+            name = 'to_nao_' + self.position[nao]
+            print name
+            self.publisher[self.position[nao]]=rospy.Publisher(name, String, queue_size=10)
 
-        rospy.Subscriber('the_flow', String, self.run_dynamics)
+        rospy.Subscriber('the_flow', String, self.test)
+        rospy.Subscriber('angles', String, self.parse_angles)
         print 'spin '+str(number_of_naos)
-        rospy.spin()
+        # rospy.spin()
 
     def choose_robot(self):
         robots = np.random.random_integers(0, 2, (1, 2))[0]
@@ -74,43 +80,42 @@ class dynamics():
 
             time.sleep(8)
 
+
+    def parse_angles(self,data):
+        message = str(data.data)
+
+        message_list = json.loads(message)
+        actions = message_list[0][0].split(',')
+
+        module = __import__('foo')
+        func = getattr(module, actions[2])
+        func(int(actions[0]),actions[1],message_list[1])
+
+
+
+    def look_to_other_way(self,nao_number,relative_to,angles):
+        basepose_HeadYaw = angles[0]
+        basepose_HeadPitch = angles[1]
+
+        if relative_to == "right":
+            self.publisher[nao_number].publish('{\"action\": \"change_pose\", \"parameters\": \"\\\"''HeadYaw,HeadPitch;' + str(basepose_HeadYaw + 1.18) + ',' + str(basepose_HeadPitch - 0.2) + ';0.08''\\\"\"}')
+
+
+        elif relative_to == "center":
+            sign = random.choice((-1, 1))
+            self.publisher[nao_number].publish('{\"action\": \"change_pose\", \"parameters\": \"\\\"''HeadYaw,HeadPitch;' + str(basepose_HeadYaw + sign * (0.4)) + ',' + str(basepose_HeadPitch + 0.2) + ';0.08''\\\"\"}')
+
+        elif relative_to == "left":
+            self.publisher[nao_number].publish('{\"action\": \"change_pose\", \"parameters\": \"\\\"''HeadYaw,HeadPitch;' + str(basepose_HeadYaw - 1.18) + ',' + str(basepose_HeadPitch - 0.2) + ';0.08''\\\"\"}')
+
+
+    def test(self):
+        print 'here'
+        # self.publisher['left'].publish('{\"action\": \"get_angles\", \"parameters\": \"\\\"''left,look_to_other_way''\\\"\"}')
+        nao.parse_message('{\"action\": \"get_angles\", \"parameters\": \"\\\"''left,look_to_other_way''\\\"\"}')
+
 if len(sys.argv) > 1:
     start=dynamics(int(sys.argv[1]))
 else:
-    start=dynamics(3)
-
-    # BoxLayout:
-    #     size_hint_y:0.05
-    #     Label:
-    #         padding_x: self.width/3
-    #         text:"Subject ID"
-    #         font_size:20
-    #         color:0,0,0,1
-    #     TextInput:
-    #         id:subject_id
-    #         padding_x: self.width/3
-    #         padding_y: ( self.height - self.line_height ) / 2.5
-    #         text:"0"
-    #         font_size:20
-    #         color:0,0,0,1
-    #
-    # BoxLayout:
-    #     size_hint_y:0.05
-    #     Button:
-    #         text:"Start"
-    #         color:0,0,0,1
-    #         font_size:30
-    #         bold: True
-    #         on_press: self.background_color = (1,0,0,1)
-    #         on_release: app.btn_released(self, app.start ,subject_id,nao_ip)  # function to be called when button is pressed
-
-    #
-    # BoxLayout:
-    #     size_hint_y:0.05
-    #     padding:'5dp'
-    #     spacing:'5dp'
-    #     Label:
-    #         text:'SetUp screen'
-    #         font_size:30
-    #
-    #         color:0,0,0,1
+    start=dynamics(1)
+    start.test()

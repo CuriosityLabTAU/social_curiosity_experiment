@@ -4,7 +4,7 @@ import time
 import sys
 
 
-def intro(subject_id=0, nao_info=[('192.168.0.100','center1')]):
+def intro(subject_id=0, nao_info=[('192.168.0.100','center')]):
 
     start_working(subject_id, nao_info)
 
@@ -46,8 +46,8 @@ def start_working(subject_id, nao_info):
 
 
     t1 = threading.Thread(target=worker1)
-    t1.start()
-    threading._sleep(0.2)
+    # t1.start()
+    # threading._sleep(0.2)
 
     for nao in nao_info:
         t2 = threading.Thread(target=worker2,args=(nao,))
