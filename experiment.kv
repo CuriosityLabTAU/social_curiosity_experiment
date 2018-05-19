@@ -25,7 +25,7 @@
         size_hint_y:0.05
 
         TextInput:
-            id:nao_ip_1
+            id:nao_ip_center
             padding_x: self.width/3
             padding_y: ( self.height - self.line_height ) / 2
             text:"192.168.0.100"
@@ -53,7 +53,7 @@
         size_hint_y:0.05
 
         TextInput:
-            id:nao_ip_1
+            id:nao_ip_left
             padding_x: self.width/3
             padding_y: ( self.height - self.line_height ) / 2
             text:"192.168.0.100"
@@ -61,7 +61,7 @@
             color:0,0,0,1
 
         TextInput:
-            id:nao_ip_2
+            id:nao_ip_right
             padding_x: self.width/3
             padding_y: ( self.height - self.line_height ) / 2
             text:"192.168.0.100"
@@ -69,13 +69,8 @@
             color:0,0,0,1
 
 
-
-
-
     BoxLayout:
         size_hint_y:0.05
-
-
         Label:
             pos_hint: {'left':0.2,"right": 0.8, 'top':1}
             padding_x: self.width/3
@@ -99,5 +94,5 @@
             font_size:30
             bold: True
             on_press: self.background_color = (1,0,0,1)
-            on_release: app.btn_released(self, app.start ,subject_id,nao_ip)  # function to be called when button is pressed
+            on_release: app.btn_released(self, app.start ,subject_id,nao_ip_center,nao_ip_left,nao_ip_right)  # function to be called when button is pressed
 

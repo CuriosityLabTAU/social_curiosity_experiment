@@ -12,12 +12,6 @@ import json
 
 import threading
 
-
-
-
-
-
-
 def get_angles_nao():
     a= nao.get_angles()
 
@@ -31,9 +25,6 @@ def get_angles_nao():
         names=names+','+nam
 
     return names[1:]+';'+angels[1:]
-
-
-
 
 
 rospy.init_node('ui')
