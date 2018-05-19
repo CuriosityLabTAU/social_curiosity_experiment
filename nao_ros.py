@@ -2,9 +2,8 @@ import rospy
 from std_msgs.msg import String
 from naoqi import ALProxy
 import sys
-# import almath
+import random
 import time
-import datetime
 import json
 
 
@@ -44,15 +43,15 @@ class NaoNode():
         name='to_nao_'+self.node_name
         self.publisher= rospy.Publisher('angles', String, queue_size=10)
         rospy.Subscriber(name, String, self.parse_message)
-        # rospy.spin()    #FOR TEST!!!!!!!!!!
+        rospy.spin()    #FOR TEST!!!!!!!!!!
 
     def parse_message(self, message):
         # message is json string in the form of:  {'action': 'run_behavior', 'parameters': ["movements/introduction_all_0",...]}
         # eval the action and run with parameters.
         # For example, eval result could look like: self,say_text_to_speech(['hello','how are you?'])
-        # message = str(message.data)
+        message = str(message.data)
 
-        message = str(message)  #FOR TEST!!!!!!!!!!
+        # message = str(message)  #FOR TEST!!!!!!!!!!
 
         message_dict = json.loads(message)
         action = str(message_dict['action'])
@@ -122,7 +121,7 @@ class NaoNode():
         pTargetAngles = [float(x) for x in info[1].split(',')]
         # pTargetAngles = [x * almath.TO_RAD for x in pTargetAngles]  # Convert to radians
         pMaxSpeedFraction = float(info[2])
-        # print(pNames, pTargetAngles, pMaxSpeedFraction)
+        print(pNames, pTargetAngles, pMaxSpeedFraction)
         self.motionProxy.post.angleInterpolationWithSpeed(pNames, pTargetAngles, pMaxSpeedFraction)
 
     def animated_speech(self,parameters):
@@ -138,18 +137,66 @@ class NaoNode():
         names = "Body"
         use_sensors = False
         print("get_angles")
-        print "Command angeles:"
-        print(str(self.motionProxy.getAngles(names, use_sensors)))
         use_sensors = True
-        print "Sensor angeles:"
         # string_to_pub = json.dumps([[caller], self.motionProxy.getAngles(names, use_sensors),self.motionProxy.getBodyNames(names)])
         string_to_pub = json.dumps([[caller],self.motionProxy.getAngles(names, use_sensors)])
-
+        print string_to_pub
         self.publisher.publish(string_to_pub)
 
 
+    def move_to_pose(self,direction):
 
+        if direction == 'right':
+            self.change_pose('HeadYaw,HeadPitch,LShoulderPitch,LShoulderRoll,LElbowYaw,LElbowRoll,LWristYaw,LHand,LHipYawPitch,LHipRoll,LHipPitch,LKneePitch,LAnklePitch,LAnkleRoll,RHipYawPitch,RHipRoll,RHipPitch,RKneePitch,RAnklePitch,RAnkleRoll,RShoulderPitch,RShoulderRoll,RElbowYaw,RElbowRoll,RWristYaw,RHand;-0.88,0.01,0.93,0.26,-0.45,-1.2,0.01,0.29,-0.6,0.2,-1.53,1.41,0.84,0.0,-0.6,0.0,-1.53,1.41,0.85,0.01,0.96,-0.29,0.53,1.26,-0.05,0.3;0.2')
+
+        elif direction == 'center':
+            self.change_pose('HeadYaw,HeadPitch,LShoulderPitch,LShoulderRoll,LElbowYaw,LElbowRoll,LWristYaw,LHand,LHipYawPitch,LHipRoll,LHipPitch,LKneePitch,LAnklePitch,LAnkleRoll,RHipYawPitch,RHipRoll,RHipPitch,RKneePitch,RAnklePitch,RAnkleRoll,RShoulderPitch,RShoulderRoll,RElbowYaw,RElbowRoll,RWristYaw,RHand;-0.02,0.2,0.93,0.26,-0.45,-1.21,0.01,0.29,-0.6,0.2,-1.53,1.41,0.84,-0.0,-0.6,-0.2,-1.53,1.41,0.85,0.01,0.96,-0.3,0.53,1.24,-0.04,0.3;0.08')
+
+        elif direction == 'left':
+            self.change_pose('HeadYaw,HeadPitch,LShoulderPitch,LShoulderRoll,LElbowYaw,LElbowRoll,LWristYaw,LHand,LHipYawPitch,LHipRoll,LHipPitch,LKneePitch,LAnklePitch,LAnkleRoll,RHipYawPitch,RHipRoll,RHipPitch,RKneePitch,RAnklePitch,RAnkleRoll,RShoulderPitch,RShoulderRoll,RElbowYaw,RElbowRoll,RWristYaw,RHand;0.88,0.01,0.92,0.27,-0.47,-1.22,0.01,0.29,-0.6,0.0,-1.53,1.41,0.84,0.0,-0.6,-0.2,-1.53,1.41,0.85,0.01,0.96,-0.3,0.53,1.24,-0.04,0.3;0.2')
+
+
+    def look_to_other_way(self,relative_to):
+        angles=self.motionProxy.getAngles("Body", True)
+        basepose_HeadYaw = angles[0]
+        basepose_HeadPitch = angles[1]
+
+        if relative_to == "right":
+            self.change_pose('HeadYaw,HeadPitch;' + str(basepose_HeadYaw + 1.18) + ',' + str(basepose_HeadPitch - 0.2) + ';0.08')
+        elif relative_to == "center":
+            sign = random.choice((-1, 1))
+            self.change_pose('HeadYaw,HeadPitch;' + str(basepose_HeadYaw + sign * (0.4)) + ',' + str(basepose_HeadPitch + 0.2) + ';0.08')
+        elif relative_to == "left":
+            self.change_pose('HeadYaw,HeadPitch;' + str(basepose_HeadYaw - 1.18) + ',' + str(basepose_HeadPitch - 0.2) + ';0.08')
+
+
+    def agree(self):
+        counter = 0
+        angles=self.motionProxy.getAngles("Body", True)
+        basepose = angles[1]
+        while counter < 3:
+            self.change_pose('HeadPitch;' + str(basepose + 0.2) + ';0.08')
+            time.sleep(0.5)
+            self.change_pose('HeadPitch;' + str(basepose - 0.2) + ';0.08')
+            time.sleep(0.5)
+            self.change_pose('HeadPitch;' + str(basepose) + ';0.08')
+            counter += 1
+
+    def disagree(self):
+        counter = 0
+        angles=self.motionProxy.getAngles("Body", True)
+        basepose = angles[0]
+        print basepose
+        while counter < 3:
+            self.change_pose('HeadYaw;' + str(basepose + 0.2) + ';0.08')
+            time.sleep(0.5)
+            self.change_pose('HeadYaw;' + str(basepose - 0.2) + ';0.08')
+            time.sleep(0.5)
+            self.change_pose('HeadYaw;' + str(basepose) + ';0.08')
+            counter += 1
 
 # strat=NaoNode(sys.argv[1],sys.argv[2])  #FOR TEST!!!!!!!!!!
 
-# strat=NaoNode('192.168.0.100','left')  #FOR TEST!!!!!!!!!!
+strat=NaoNode('192.168.0.100','left')  #FOR TEST!!!!!!!!!!
+
+
