@@ -1,5 +1,5 @@
 <Config>:
-# Naos ip and location configuration and subject id
+# Naos ip and location and subject id configuration
     orientation:'vertical'
     BoxLayout:
         size_hint_y:0.05
@@ -28,7 +28,7 @@
             id:nao_ip_center
             padding_x: self.width/3
             padding_y: ( self.height - self.line_height ) / 2
-            text:"192.168.0.100"
+            text:"0"
             font_size:20
             color:0,0,0,1
 
@@ -56,7 +56,7 @@
             id:nao_ip_left
             padding_x: self.width/3
             padding_y: ( self.height - self.line_height ) / 2
-            text:"192.168.0.100"
+            text:"192.168.0.102"
             font_size:20
             color:0,0,0,1
 
@@ -64,7 +64,7 @@
             id:nao_ip_right
             padding_x: self.width/3
             padding_y: ( self.height - self.line_height ) / 2
-            text:"192.168.0.100"
+            text:"0"
             font_size:20
             color:0,0,0,1
 
@@ -94,5 +94,5 @@
             font_size:30
             bold: True
             on_press: self.background_color = (1,0,0,1)
-            on_release: app.btn_released(self, app.start ,subject_id,nao_ip_center,nao_ip_left,nao_ip_right)  # function to be called when button is pressed
+            on_release: app.btn_released(self, app.start ,subject_id ,nao_ip_center,nao_ip_left,nao_ip_right)  # function to be called when button is pressed
 

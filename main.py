@@ -5,20 +5,20 @@ import sys
 
 
 def intro(subject_id=0, nao_info=[('192.168.0.100','center')]):
-
     start_working(subject_id, nao_info)
-
-
     time.sleep(60)
 
 
 def start_working(subject_id, nao_info):
+    print 'intro'+str(nao_info)
 
     def worker1():
         os.system('roscore')
 
     #make the class instance for nao_ros
     def worker2(_nao):
+        if _nao[0]=='0':
+            return
         os.system('python nao_ros.py' + ' '+ _nao[0]+' '+_nao[1])
 
     def worker3():
@@ -50,13 +50,14 @@ def start_working(subject_id, nao_info):
     # threading._sleep(0.2)
 
     for nao in nao_info:
+        print 'nao'+str(nao)
         t2 = threading.Thread(target=worker2,args=(nao,))
         t2.start()
         threading._sleep(2.5)
 
     t3 = threading.Thread(target=worker3)
-    # t3.start()
-    # threading._sleep(0.2)
+    t3.start()
+    threading._sleep(0.2)
 
 
 

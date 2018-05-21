@@ -46,7 +46,7 @@ class dynamics():
             print name
             self.publisher[self.position[nao]]=rospy.Publisher(name, String, queue_size=10)
 
-        rospy.Subscriber('the_flow', String, self.test)
+        rospy.Subscriber('the_flow', String, self.run_dynamics)
         print 'spin '+str(number_of_naos)
         rospy.spin()
 
@@ -65,19 +65,21 @@ class dynamics():
         time_for_interaction= float(data.data)
 
 
-        while time.time() -starttime <time_for_interaction:
-            robots_for_stemp=self.choose_robot()
+        # while time.time() -starttime <time_for_interaction:
+        #     robots_for_stemp=self.choose_robot()
+        #
+        #     relationship=self.matrix[robots_for_stemp[0],robots_for_stemp[1]]
+        #
+        #     side=self.transformation[robots_for_stemp[0]][robots_for_stemp[1]]
+        #
+        #     behavior=self.behaviors[relationship][side]
+        #
+        #     self.publisher[robots_for_stemp[0]].publish(self.parse_behavior(behavior))
+        #     print behavior,robots_for_stemp[0]
+        #
+        #     time.sleep(8)
+        self.publisher['left'].publish('{\"action\": \"run_behavior\", \"parameters\": [\"social_curiosity/talk/1\"]}')
 
-            relationship=self.matrix[robots_for_stemp[0],robots_for_stemp[1]]
-
-            side=self.transformation[robots_for_stemp[0]][robots_for_stemp[1]]
-
-            behavior=self.behaviors[relationship][side]
-
-            self.publisher[robots_for_stemp[0]].publish(self.parse_behavior(behavior))
-            print behavior,robots_for_stemp[0]
-
-            time.sleep(8)
 
 
     def test(self,aa):

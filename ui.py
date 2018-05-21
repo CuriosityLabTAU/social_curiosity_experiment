@@ -51,14 +51,15 @@ class ExperimentApp(App):
 
         return self.sm
 
-    def run_main(subject_id, _nao_info):
+    def run_main(self,subject_id, _nao_info):
         str_for_main = ''
         for nao_inst in _nao_info:
             str_for_main = str_for_main + nao_inst[0] + '@' + nao_inst[1] + ' '
         os.system('python main.py ' + subject_id + ' ' + str_for_main[:-1])
 
-    def start(self):
-        t1 = threading.Thread(target=self.run_main, args=(str(len(self.nao_info)), self.nao_info))
+    def start(self,subject_id,nao_ip_center,nao_ip_left,nao_ip_right):
+        self.nao_info = [(nao_ip_left, 'left'), (nao_ip_center, 'center'), (nao_ip_right, 'right')]
+        t1 = threading.Thread(target=self.run_main, args=(subject_id, self.nao_info))
         t1.start()
         threading._sleep(25)
 
@@ -75,13 +76,22 @@ class ExperimentApp(App):
         print '--'
 
 
-    def btn_released(self,btn,func,param1=None,param2=None):#button configuration
+    def btn_released(self,btn,func,param1=None,param2=None,param3=None,param4=None):#button configuration
         btn.background_coler=(1,1,1,1)
         if param1 is not None:
             func_param1=param1.text
             if param2 is not None:
                 func_param2 = param2.text
-                func(func_param1,func_param2)
+                if param3 is not None:
+                    func_param3 = param3.text
+                    if param4 is not None:
+                        func_param4 = param4.text
+                        func(func_param1, func_param2, func_param3, func_param4)
+                    else:
+                        func(func_param1, func_param2, func_param3)
+                else:
+                    func(func_param1,func_param2)
+
             else:
                 func(func_param1)
         else:

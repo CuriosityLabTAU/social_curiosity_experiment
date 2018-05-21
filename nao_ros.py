@@ -13,6 +13,7 @@ class NaoNode():
         self.port = 9559
         self.robot_ip=_robot_ip
         self.node_name=_node_name
+        print 'nao_ros'+_robot_ip
 
         try:
             #motionProxy
@@ -127,10 +128,10 @@ class NaoNode():
     def animated_speech(self,parameters):
         # make nao say the string text
         # parameters in the form of ['say something',pitchShift=float]
-        text=parameters[0]
-        pitch=parameters[1]
+        text=str(parameters)
+        # pitch=parameters[1]
         print("say_text_to_animated_speech", text)
-        self.animatedSpeech.say(text, {"pitchShift": pitch})
+        self.animatedSpeech.say(text, {"pitchShift": 1.0})
 
     def get_angles(self,parameters):
         caller=self.node_name+','+parameters
@@ -195,8 +196,8 @@ class NaoNode():
             self.change_pose('HeadYaw;' + str(basepose) + ';0.08')
             counter += 1
 
-# strat=NaoNode(sys.argv[1],sys.argv[2])  #FOR TEST!!!!!!!!!!
-
-strat=NaoNode('192.168.0.100','left')  #FOR TEST!!!!!!!!!!
+strat=NaoNode(sys.argv[1],sys.argv[2])  #FOR TEST!!!!!!!!!!
+#
+# strat=NaoNode('192.168.0.102','left')  #FOR TEST!!!!!!!!!!
 
 

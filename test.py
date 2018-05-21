@@ -28,11 +28,27 @@ def get_angles_nao():
 
 
 rospy.init_node('ui')
-publisher = rospy.Publisher('the_flow', String, queue_size=10)
+publisher = rospy.Publisher('to_nao_left', String, queue_size=10)
 
 threading._sleep(5)
 
 print 'here-ui'
-publisher.publish('60')
+publisher.publish('{\"action\": \"move_to_pose\", \"parameters\": \"\\\"''center''\\\"\"}')
+# time.sleep(2)
+
+# publisher.publish('{\"action\": \"look_to_other_way\", \"parameters\": \"\\\"''center''\\\"\"}')
+# publisher.publish('{\"action\": \"agree\"}')
 
 threading._sleep(5)
+
+import rospy
+from std_msgs.msg import String
+from naoqi import ALProxy
+import sys
+import random
+import time
+import json
+
+#
+# animatedSpeech = ALProxy("ALAnimatedSpeech", '192.168.0.102', 9559)
+# animatedSpeech.say('The Mona Lisa and Venus de Milo in the big-hitting Louvre are priceless Paris must-sees. Conveniently, quintessential Parisian gardens Jardin des Tuileries and Jardin du Palais Royal, with its elegant boutique-clad arcades, are next door', {"pitchShift": 1.0})
