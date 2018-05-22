@@ -78,6 +78,7 @@ class dynamics():
         #     print behavior,robots_for_stemp[0]
         #
         #     time.sleep(8)
+        choose_robot=np.random.random_integers(0, 2, (1, 2))[0]
         self.publisher['left'].publish('{\"action\": \"run_behavior\", \"parameters\": [\"social_curiosity/talk/1\"]}')
 
 
