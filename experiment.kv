@@ -3,7 +3,8 @@
 
     Widget:
         Label:
-            pos: root.width*0.5 , root.height*0.85
+            pos: root.width*0.4 , root.height*0.9
+            size: root.width*0.2 , root.height*0.08
             text:'SetUp screen'
             font_size:30
             color:0,0,0,1
@@ -11,13 +12,13 @@
 
     Widget:
         Image:
-            pos: root.width*0.4 , root.height*0.70
-            size: root.width*0.25 , root.height*0.3
+            pos: root.width*0.4 , root.height*0.62
+            size: root.width*0.2 , root.height*0.3
             source: 'nao_site_down.jpg'
         TextInput:
             id:nao_ip_center
-            pos: root.width*0.5 , root.height*0.5
-            size: root.width*1 , root.height*0.1
+            pos: root.width*0.4 , root.height*0.6
+            size: root.width*0.2 , root.height*0.065
             #padding_x: self.width/3
             #padding_y: ( self.height - self.line_height ) / 2
             text:"0"
@@ -27,32 +28,47 @@
 
     Widget:
         Image:
-            padding_x: 1
-            padding_y: 1
-            size_hint: None, None
+            canvas.before:
+                PushMatrix
+                Rotate:
+                    angle: 270
+                    origin: self.center
+            canvas.after:
+                PopMatrix
+
+            pos: root.width*0.79 , root.height*0.38
+            size: root.width*0.3 , root.height*0.2
             size: 150, 150
             source: 'nao_site_down.jpg'
+
         TextInput:
-            id:nao_ip_left
-            padding_x: self.width/3
-            padding_y: ( self.height - self.line_height ) / 2
-            text:"192.168.0.102"
+            id:nao_ip_right
+            pos: root.width*0.78 , root.height*0.35
+            size: root.width*0.2 , root.height*0.065
+            text:"0"
             font_size:20
             color:0,0,0,1
 
     Widget:
 
         Image:
-            padding_x: 1
-            padding_y: 1
-            size_hint: None, None
+            canvas.before:
+                PushMatrix
+                Rotate:
+                    angle: 90
+                    origin: self.center
+            canvas.after:
+                PopMatrix
+
+            pos: root.width*0.05 , root.height*0.38
+            size: root.width*0.3 , root.height*0.2
             size: 150, 150
             source: 'nao_site_down.jpg'
 
         TextInput:
-            id:nao_ip_right
-            padding_x: self.width/3
-            padding_y: ( self.height - self.line_height ) / 2
+            id:nao_ip_left
+            pos: root.width*0.05 , root.height*0.35
+            size: root.width*0.2 , root.height*0.065
             text:"0"
             font_size:20
             color:0,0,0,1
@@ -61,25 +77,25 @@
 
 
     Widget:
-        size_hint_y:0.05
         Label:
-            pos_hint: {'left':0.2,"right": 0.8, 'top':1}
-            padding_x: self.width/3
+            pos: root.width*0 , root.height*0.1
+            size: root.width*0.5 , root.height*0.065
             text:"Subject ID"
             font_size:20
             color:0,0,0,1
 
         TextInput:
             id:subject_id
-            padding_x: self.width/3
-            padding_y: ( self.height - self.line_height ) / 2.5
+            pos: root.width*0.5 , root.height*0.1
+            size: root.width*0.5 , root.height*0.065
             text:"0"
             font_size:20
             color:0,0,0,1
 
     Widget:
-        size_hint_y:0.05
         Button:
+            pos: root.width*0 , root.height*0
+            size: root.width*1 , root.height*0.1
             text:"Start"
             color:0,0,0,1
             font_size:30
@@ -87,3 +103,21 @@
             on_press: self.background_color = (1,0,0,1)
             on_release: app.btn_released(self, app.start ,subject_id ,nao_ip_center,nao_ip_left,nao_ip_right)  # function to be called when button is pressed
 
+
+<Calibration_screen>:
+    Widget:
+        Label:
+            pos: root.width*0.4 , root.height*0.9
+            size: root.width*0.2 , root.height*0.08
+            text:'SetUp screen'
+            font_size:30
+            color:0,0,0,1
+        Button:
+            pos: root.width*0 , root.height*0
+            size: root.width*1 , root.height*0.1
+            text:"Start"
+            color:0,0,0,1
+            font_size:30
+            bold: True
+            on_press: self.background_color = (1,0,0,1)
+            on_release: app.btn_released(self, app.start ,subject_id ,nao_ip_center,nao_ip_left,nao_ip_right)  # function to be called when button is pressed
