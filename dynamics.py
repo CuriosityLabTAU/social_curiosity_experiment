@@ -37,6 +37,7 @@ class dynamics():
 
         self.position={0:'left',1:'center',2:'right'}
 
+        self.next_robot_data={'left':[],'center':[],'right':[]}
 
         #ros:
         rospy.init_node('dynamics')
@@ -47,6 +48,8 @@ class dynamics():
             self.publisher[self.position[nao]]=rospy.Publisher(name, String, queue_size=10)
 
         rospy.Subscriber('the_flow', String, self.run_dynamics)
+        rospy.Subscriber('eye_tracking', String, self.update_next_robot)
+
         print 'spin '+str(number_of_naos)
         rospy.spin()
 
@@ -63,6 +66,9 @@ class dynamics():
         starttime = time.time()
 
         time_for_interaction= float(data.data)
+
+    def restart_(self):
+        self.next_robot_data={'left':[],'center':[],'right':[]}
 
 
         # while time.time() -starttime <time_for_interaction:
@@ -81,6 +87,9 @@ class dynamics():
         choose_robot=np.random.random_integers(0, 2, (1, 2))[0]
         self.publisher['left'].publish('{\"action\": \"run_behavior\", \"parameters\": [\"social_curiosity/talk/1\"]}')
 
+
+    def update_next_robot(self,data):
+        self.next_robot_data[data.data].append(time.time())
 
 
     def test(self,aa):

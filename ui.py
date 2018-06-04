@@ -24,8 +24,12 @@ import datetime
 
 class Config(BoxLayout):
     pass
-    # nao_ip = ObjectProperty()
-    # subject_id= ObjectProperty()
+
+class Calibration_screen(BoxLayout):
+    pass
+
+class Tracking_screen(BoxLayout):
+    pass
 
 class ExperimentApp(App):
 
@@ -39,6 +43,8 @@ class ExperimentApp(App):
         self.nao_info = [('192.168.0.102', 'left'), ('192.168.0.106', 'center'), ('192.168.0.101', 'right')]
 
         self.config = Config()
+        self.calibration_screen= Calibration_screen()
+        self.tracking_screen=Tracking_screen()
 
         # defines the screen manager, moves between forms
         self.sm = ScreenManager()
@@ -49,7 +55,26 @@ class ExperimentApp(App):
         Window.clearcolor = (1, 1, 1, 1)
         self.sm.add_widget(screen)
 
+        screen = Screen(name='calibration_screen')
+        screen.add_widget(self.calibration_screen)
+        Window.clearcolor = (1, 1, 1, 1)
+        self.sm.add_widget(screen)
+
+        screen = Screen(name='tracking_screen')
+        screen.add_widget(self.tracking_screen)
+        Window.clearcolor = (1, 1, 1, 1)
+        self.sm.add_widget(screen)
+
+        # #ros
+        # rospy.init_node('ui')
+        # self.publisher = rospy.Publisher('the_flow', String, queue_size=10)
+        # self.publisher_eye_tracking = rospy.Publisher('eye_tracking', String, queue_size=10)
+
+
+
+
         return self.sm
+
 
     def run_main(self,subject_id, _nao_info):
         str_for_main = ''
@@ -58,22 +83,35 @@ class ExperimentApp(App):
         os.system('python main.py ' + subject_id + ' ' + str_for_main[:-1])
 
     def start(self,subject_id,nao_ip_center,nao_ip_left,nao_ip_right):
-        self.nao_info = [(nao_ip_left, 'left'), (nao_ip_center, 'center'), (nao_ip_right, 'right')]
-        t1 = threading.Thread(target=self.run_main, args=(subject_id, self.nao_info))
-        t1.start()
-        threading._sleep(25)
+        # self.nao_info = [(nao_ip_left, 'left'), (nao_ip_center, 'center'), (nao_ip_right, 'right')]
+        # t1 = threading.Thread(target=self.run_main, args=(subject_id, self.nao_info))
+        # t1.start()
+        # threading._sleep(25)
+        #
 
-        rospy.init_node('ui')
-        publisher = rospy.Publisher('the_flow', String, queue_size=10)
+        #
+        # threading._sleep(5)
+        #
+        # print 'here-ui'
+        # self.publisher.publish('60')
+        #
+        # threading._sleep(5)
+        #
+        # print '--'
 
-        threading._sleep(5)
+        self.sm.current = "calibration_screen"
 
-        print 'here-ui'
-        publisher.publish('60')
 
-        threading._sleep(5)
+    def calibration(self):
 
-        print '--'
+        self.sm.current = "tracking_screen"
+
+    def looking_at(self,direction):
+        pass
+        # self.publisher_eye_tracking.publish(direction)
+
+
+
 
 
     def btn_released(self,btn,func,param1=None,param2=None,param3=None,param4=None):#button configuration
