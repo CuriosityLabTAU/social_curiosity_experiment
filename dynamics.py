@@ -38,6 +38,7 @@ class dynamics():
         self.position={0:'left',1:'center',2:'right'}
 
         self.next_robot_data={'left':[],'center':[],'right':[]}
+        self.present_direction=0
 
         #ros:
         rospy.init_node('dynamics')
@@ -67,7 +68,7 @@ class dynamics():
 
         time_for_interaction= float(data.data)
 
-    def restart_(self):
+    def restart_robot_data(self):
         self.next_robot_data={'left':[],'center':[],'right':[]}
 
 
@@ -89,7 +90,20 @@ class dynamics():
 
 
     def update_next_robot(self,data):
-        self.next_robot_data[data.data].append(time.time())
+        direction=data.data
+        if self.present_direction==0:
+            if direction== 'None':
+                return
+            else:
+                self.next_robot_data[data.data].append(time.time())
+
+        else:
+            if direction== 'None':
+                return
+            else:
+                self.next_robot_data[data.data].append(time.time())
+
+        self.present_direction=direction
 
 
     def test(self,aa):
