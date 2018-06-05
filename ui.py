@@ -106,7 +106,7 @@ class ExperimentApp(App):
 
         self.sm.current = "tracking_screen"
 
-    def looking_at(self,direction):
+        def looking_at(self,direction):
         pass
         # self.publisher_eye_tracking.publish(direction)
 

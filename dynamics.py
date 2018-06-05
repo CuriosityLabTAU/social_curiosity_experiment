@@ -2,6 +2,7 @@ import numpy as np
 import time
 import rospy
 from std_msgs.msg import String
+import operator
 import sys
 import json
 import random
@@ -60,50 +61,82 @@ class dynamics():
             robots = self.choose_robot()
         return robots
 
-    def parse_behavior(self, _behavior=str):
-        return '{\"action\" : \"run_behavior\", \"parameters\" : [\"' + _behavior[0] + '\", \"wait\"]}'
+    def parse_behavior(self, _dict):
+        return json.dumps(_dict)
+
 
     def run_dynamics(self,data):
+        secondary_robots=['left','center','right']
+
+        #config robots
+        main_robot=self.choose_next_robot()
+        secondary_robots.remove(main_robot)
+
+        #main robot - main behavior
+        self.publisher[main_robot].publish(self.parse_behavior({'action':'run_behavior','parameters':'social_curiosity/talk/1'}))
+
+
+
+        for robot in secondary_robots:
+            self.publisher[robot].publish('{\"action\": \"move_to_pose\", \"parameters\": \"\\\"''right''\\\"\"}')
+            self.publisher[robot].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': self.transformation[][]}))
+
         starttime = time.time()
+        while time.time() -starttime <60:
+            robots_for_stemp=self.choose_robot()
 
-        time_for_interaction= float(data.data)
+            relationship=self.matrix[robots_for_stemp[0],robots_for_stemp[1]]
 
-    def restart_robot_data(self):
-        self.next_robot_data={'left':[],'center':[],'right':[]}
+            side=self.transformation[robots_for_stemp[0]][robots_for_stemp[1]]
 
+            behavior=self.behaviors[relationship][side]
 
-        # while time.time() -starttime <time_for_interaction:
-        #     robots_for_stemp=self.choose_robot()
-        #
-        #     relationship=self.matrix[robots_for_stemp[0],robots_for_stemp[1]]
-        #
-        #     side=self.transformation[robots_for_stemp[0]][robots_for_stemp[1]]
-        #
-        #     behavior=self.behaviors[relationship][side]
-        #
-        #     self.publisher[robots_for_stemp[0]].publish(self.parse_behavior(behavior))
-        #     print behavior,robots_for_stemp[0]
-        #
-        #     time.sleep(8)
+            self.publisher[robots_for_stemp[0]].publish(self.parse_behavior(behavior))
+            print behavior,robots_for_stemp[0]
+
+            time.sleep(8)
         choose_robot=np.random.random_integers(0, 2, (1, 2))[0]
         self.publisher['left'].publish('{\"action\": \"run_behavior\", \"parameters\": [\"social_curiosity/talk/1\"]}')
 
 
-    def update_next_robot(self,data):
+    def update_next_robot(self,data='None'):
         direction=data.data
         if self.present_direction==0:
             if direction== 'None':
                 return
             else:
-                self.next_robot_data[data.data].append(time.time())
+                self.next_robot_data[direction].append(time.time())
 
         else:
-            if direction== 'None':
-                return
-            else:
-                self.next_robot_data[data.data].append(time.time())
+            self.next_robot_data[self.present_direction][-1] -= time.time()
 
-        self.present_direction=direction
+            if direction== 'None':
+                self.present_direction = 0
+
+            else:
+                self.present_direction = direction
+
+
+
+    def choose_next_robot(self):
+        self.update_next_robot() #finish counting the time
+
+        #process the data and chose the robot that had the most "look time"
+        #agregat data
+        for v in list(self.next_robot_data):
+            self.next_robot_data[v] = -1 * sum(self.next_robot_data[v])
+        if np.std(self.next_robot_data.values()) <1:
+            # if there is no significant one -choose randomly
+            robot_number = np.random.random_integers(0, 2)
+            chosen_robot = self.position[robot_number]
+
+        else:
+            chosen_robot=max(self.next_robot_data.iteritems(), key=operator.itemgetter(1))[0]
+
+        #restart next_robot_data
+        self.next_robot_data = {'left': [], 'center': [], 'right': []}
+
+        return chosen_robot
 
 
     def test(self,aa):
