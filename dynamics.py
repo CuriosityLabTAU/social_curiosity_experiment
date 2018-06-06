@@ -20,17 +20,19 @@ class dynamics():
         self.matrix = np.random.random_integers(-1, 1, (3, 3))
 
         self.behaviors={-1:{
-                        "left":['social_curiosity-2ed02f/left_pos'],
-                        "center": ['social_curiosity-2ed02f/center_pos'],
-                        "right": ['social_curiosity-2ed02f/right_pos']},
+                        "left"  :[{'action':'disagree'},{'action':'look_to_other_way'},{'action':'run_behavior','parameters':'social_curiosity/close_hands'}],
+                        "center":[{'action':'disagree'},{'action':'look_to_other_way'},{'action':'run_behavior','parameters':'social_curiosity/close_hands'}],
+                        "right" :[{'action':'disagree'},{'action':'look_to_other_way'},{'action':'run_behavior','parameters':'social_curiosity/close_hands'}]},
+
                          0:{
-                        "left": ['social_curiosity-2ed02f/left_pos'],
-                        "center": ['social_curiosity-2ed02f/center_pos'],
-                        "right": ['social_curiosity-2ed02f/right_pos']},
+                        "left"  :['social_curiosity-2ed02f/left_pos'],
+                        "center":['social_curiosity-2ed02f/center_pos'],
+                        "right" :['social_curiosity-2ed02f/right_pos']},
+
                          1:{
-                        "left": ['social_curiosity-2ed02f/left_pos'],
-                        "center": ['social_curiosity-2ed02f/center_pos'],
-                        "right": ['social_curiosity-2ed02f/right_pos']}}
+                        "left"  :['social_curiosity-2ed02f/left_pos'],
+                        "center":['social_curiosity-2ed02f/center_pos'],
+                        "right" :['social_curiosity-2ed02f/right_pos']}}
 
         self.transformation={0:{1:'left',2:'center','h':'right',},
                              1:{0:'right',2:'left','h':'center'},
@@ -45,9 +47,9 @@ class dynamics():
         rospy.init_node('dynamics')
         self.publisher ={}
         for nao in range(number_of_naos):
-            name = 'to_nao_' + self.position[nao]
+            name = 'to_nao_' + str(nao)
             print name
-            self.publisher[self.position[nao]]=rospy.Publisher(name, String, queue_size=10)
+            self.publisher[nao]=rospy.Publisher(name, String, queue_size=10)
 
         rospy.Subscriber('the_flow', String, self.run_dynamics)
         rospy.Subscriber('eye_tracking', String, self.update_next_robot)
@@ -55,48 +57,37 @@ class dynamics():
         print 'spin '+str(number_of_naos)
         rospy.spin()
 
-    def choose_robot(self):
-        robots = np.random.random_integers(0, 2, (1, 2))[0]
-        if robots[0] == robots[1]:
-            robots = self.choose_robot()
-        return robots
-
     def parse_behavior(self, _dict):
         return json.dumps(_dict)
 
 
     def run_dynamics(self,data):
-        secondary_robots=['left','center','right']
 
-        #config robots
-        main_robot=self.choose_next_robot()
-        secondary_robots.remove(main_robot)
+        while True:
+            secondary_robots=[0,1,2]
 
-        #main robot - main behavior
-        self.publisher[main_robot].publish(self.parse_behavior({'action':'run_behavior','parameters':'social_curiosity/talk/1'}))
+            #config robots
+            main_robot=self.choose_next_robot()
+            secondary_robots.remove(main_robot)
 
+            #main robot - main behavior
+            self.publisher[main_robot].publish(self.parse_behavior({'action':'run_behavior','parameters':'social_curiosity/talk/1'}))
 
+            #secondary_robots look at main robot
+            for robot in secondary_robots:
+                self.publisher[robot].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': self.transformation[robot][main_robot]}))
 
-        for robot in secondary_robots:
-            self.publisher[robot].publish('{\"action\": \"move_to_pose\", \"parameters\": \"\\\"''right''\\\"\"}')
-            self.publisher[robot].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': self.transformation[][]}))
+            time.sleep(7)
 
-        starttime = time.time()
-        while time.time() -starttime <60:
-            robots_for_stemp=self.choose_robot()
+            #secondary_robots look at main behaviour
+            for robot in secondary_robots:
+                relationship=self.matrix[robot,main_robot]
+                direction_for_behavior=self.transformation[robot][main_robot]
+                behavior=random.choice(self.behaviors[relationship][direction_for_behavior])
 
-            relationship=self.matrix[robots_for_stemp[0],robots_for_stemp[1]]
+                self.publisher[robot].publish(self.parse_behavior(behavior))
 
-            side=self.transformation[robots_for_stemp[0]][robots_for_stemp[1]]
-
-            behavior=self.behaviors[relationship][side]
-
-            self.publisher[robots_for_stemp[0]].publish(self.parse_behavior(behavior))
-            print behavior,robots_for_stemp[0]
-
-            time.sleep(8)
-        choose_robot=np.random.random_integers(0, 2, (1, 2))[0]
-        self.publisher['left'].publish('{\"action\": \"run_behavior\", \"parameters\": [\"social_curiosity/talk/1\"]}')
+            time.sleep(15)
 
 
     def update_next_robot(self,data='None'):
@@ -116,8 +107,6 @@ class dynamics():
             else:
                 self.present_direction = direction
 
-
-
     def choose_next_robot(self):
         self.update_next_robot() #finish counting the time
 
@@ -136,7 +125,7 @@ class dynamics():
         #restart next_robot_data
         self.next_robot_data = {'left': [], 'center': [], 'right': []}
 
-        return chosen_robot
+        return self.position.keys()[self.position.values().index(chosen_robot)]
 
 
     def test(self,aa):

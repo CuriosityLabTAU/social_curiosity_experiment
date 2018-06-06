@@ -83,7 +83,7 @@ class ExperimentApp(App):
         os.system('python main.py ' + subject_id + ' ' + str_for_main[:-1])
 
     def start(self,subject_id,nao_ip_center,nao_ip_left,nao_ip_right):
-        # self.nao_info = [(nao_ip_left, 'left'), (nao_ip_center, 'center'), (nao_ip_right, 'right')]
+        # self.nao_info = [(nao_ip_left, '0'), (nao_ip_center, '1'), (nao_ip_right, '2')]
         # t1 = threading.Thread(target=self.run_main, args=(subject_id, self.nao_info))
         # t1.start()
         # threading._sleep(25)
