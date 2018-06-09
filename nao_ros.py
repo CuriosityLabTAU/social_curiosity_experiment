@@ -66,7 +66,7 @@ class NaoNode():
             parameters = message_dict['parameters']
         else:
             parameters = ""
-        print(str("self." + action + "(" + str(parameters) + ")"))
+        print(str("self." + action + "('" + str(parameters) + "')"))
         eval(str("self." + action + "(" + str(parameters) + ")"))
 
     def run_behavior(self, parameters):
