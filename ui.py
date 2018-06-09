@@ -83,21 +83,20 @@ class ExperimentApp(App):
         os.system('python main.py ' + subject_id + ' ' + str_for_main[:-1])
 
     def start(self,subject_id,nao_ip_center,nao_ip_left,nao_ip_right):
-        # self.nao_info = [(nao_ip_left, '0'), (nao_ip_center, '1'), (nao_ip_right, '2')]
-        # t1 = threading.Thread(target=self.run_main, args=(subject_id, self.nao_info))
-        # t1.start()
-        # threading._sleep(25)
-        #
+        self.nao_info = [(nao_ip_left, '0'), (nao_ip_center, '1'), (nao_ip_right, '2')]
+        t1 = threading.Thread(target=self.run_main, args=(subject_id, self.nao_info))
+        t1.start()
+        threading._sleep(25)
 
-        #
-        # threading._sleep(5)
-        #
-        # print 'here-ui'
-        # self.publisher.publish('60')
-        #
-        # threading._sleep(5)
-        #
-        # print '--'
+
+        threading._sleep(5)
+
+        print 'here-ui'
+        self.publisher.publish('60')
+
+        threading._sleep(5)
+
+        print '--'
 
         self.sm.current = "calibration_screen"
 
@@ -106,9 +105,9 @@ class ExperimentApp(App):
 
         self.sm.current = "tracking_screen"
 
-        def looking_at(self,direction):
-        pass
-        # self.publisher_eye_tracking.publish(direction)
+    def looking_at(self,direction):
+
+        self.publisher_eye_tracking.publish(direction)
 
 
 

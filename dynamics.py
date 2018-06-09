@@ -20,19 +20,19 @@ class dynamics():
         self.matrix = np.random.random_integers(-1, 1, (3, 3))
 
         self.behaviors={-1:{
-                        "left"  :[{'action':'disagree'},{'action':'look_to_other_way'},{'action':'run_behavior','parameters':'social_curiosity/close_hands'}],
-                        "center":[{'action':'disagree'},{'action':'look_to_other_way'},{'action':'run_behavior','parameters':'social_curiosity/close_hands'}],
-                        "right" :[{'action':'disagree'},{'action':'look_to_other_way'},{'action':'run_behavior','parameters':'social_curiosity/close_hands'}]},
+                        "left"  :[{'action':'disagree'},{'action':'look_to_other_way','parameters':'left'},{'action':'run_behavior','parameters':'social_curiosity/close_hands'}],
+                        "center":[{'action':'disagree'},{'action':'look_to_other_way','parameters':'center'},{'action':'run_behavior','parameters':'social_curiosity/close_hands'}],
+                        "right" :[{'action':'disagree'},{'action':'look_to_other_way','parameters':'right'},{'action':'run_behavior','parameters':'social_curiosity/close_hands'}]},
 
                          0:{
-                        "left"  :['social_curiosity-2ed02f/left_pos'],
-                        "center":['social_curiosity-2ed02f/center_pos'],
-                        "right" :['social_curiosity-2ed02f/right_pos']},
+                        "left"  :[{'action':'run_behavior','parameters':'social_curiosity/neutral'},{'action': 'move_to_pose', 'parameters': 'left'}],
+                        "center":[{'action':'run_behavior','parameters':'social_curiosity/neutral'},{'action': 'move_to_pose', 'parameters': 'center'}],
+                        "right" :[{'action':'run_behavior','parameters':'social_curiosity/neutral'},{'action': 'move_to_pose', 'parameters': 'right'}]},
 
                          1:{
-                        "left"  :['social_curiosity-2ed02f/left_pos'],
-                        "center":['social_curiosity-2ed02f/center_pos'],
-                        "right" :['social_curiosity-2ed02f/right_pos']}}
+                        "left"  :[{'action':'agree'},{'action':'run_behavior','parameters':'social_curiosity/open_hands'},{'action':'run_behavior','parameters':'social_curiosity/left_forward'}],
+                        "center":[{'action':'agree'},{'action':'run_behavior','parameters':'social_curiosity/open_hands'},{'action':'run_behavior','parameters':'social_curiosity/center_forward'}],
+                        "right" :[{'action':'agree'},{'action':'run_behavior','parameters':'social_curiosity/open_hands'},{'action':'run_behavior','parameters':'social_curiosity/right_forward'}]}}
 
         self.transformation={0:{1:'left',2:'center','h':'right',},
                              1:{0:'right',2:'left','h':'center'},
@@ -90,6 +90,8 @@ class dynamics():
             time.sleep(15)
 
 
+
+
     def update_next_robot(self,data='None'):
         direction=data.data
         if self.present_direction==0:
@@ -144,6 +146,6 @@ class dynamics():
 
 if len(sys.argv) > 1:
     start=dynamics(int(sys.argv[1]))
-else:
-    start=dynamics(1)
+# else:
+#     start=dynamics(1)
     # start.test()
