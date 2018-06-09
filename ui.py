@@ -66,9 +66,9 @@ class ExperimentApp(App):
         self.sm.add_widget(screen)
 
         # #ros
-        # rospy.init_node('ui')
-        # self.publisher = rospy.Publisher('the_flow', String, queue_size=10)
-        # self.publisher_eye_tracking = rospy.Publisher('eye_tracking', String, queue_size=10)
+        rospy.init_node('ui')
+        self.publisher = rospy.Publisher('the_flow', String, queue_size=10)
+        self.publisher_eye_tracking = rospy.Publisher('eye_tracking', String, queue_size=10)
 
 
 
@@ -89,14 +89,8 @@ class ExperimentApp(App):
         threading._sleep(25)
 
 
-        threading._sleep(5)
-
         print 'here-ui'
-        self.publisher.publish('60')
 
-        threading._sleep(5)
-
-        print '--'
 
         self.sm.current = "calibration_screen"
 
@@ -104,6 +98,11 @@ class ExperimentApp(App):
     def calibration(self):
 
         self.sm.current = "tracking_screen"
+
+        self.publisher.publish('start')
+
+        threading._sleep(5)
+
 
     def looking_at(self,direction):
 

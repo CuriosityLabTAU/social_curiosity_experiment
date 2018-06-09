@@ -24,6 +24,9 @@ def start_working(subject_id, nao_info):
     def worker3():
         os.system('python dynamics.py'+' '+ str(len(nao_info)))
 
+    def worker4():
+        os.system('python next_robot.py' + ' ' + str(len(nao_info)))
+
 
 
 
@@ -59,6 +62,10 @@ def start_working(subject_id, nao_info):
     t3.start()
     threading._sleep(0.2)
 
+
+    t4 = threading.Thread(target=worker4)
+    t4.start()
+    threading._sleep(0.2)
 
 
     # t3 = threading.Thread(target=worker3)

@@ -39,6 +39,9 @@ class NaoNode():
             print "Error was: ",e
             sys.exit(1)
 
+        # wake_up
+
+        self.rest()
         #ros:
         rospy.init_node('nao_listener'+self.node_name)
         name='to_nao_'+self.node_name
@@ -54,7 +57,10 @@ class NaoNode():
 
         # message = str(message)  #FOR TEST!!!!!!!!!!
 
+
         message_dict = json.loads(message)
+
+
         action = str(message_dict['action'])
         if 'parameters' in message_dict:
             parameters = message_dict['parameters']
@@ -67,7 +73,6 @@ class NaoNode():
         ''' run a behavior installed on nao. parameters is a behavior. For example "movements/introduction_all_0" '''
         try:
             behavior = str(parameters[0])
-            print("behavior",behavior)
             if len(parameters) > 1:
                 if parameters[1] == 'wait':
                     self.managerProxy.runBehavior(behavior)
@@ -116,13 +121,13 @@ class NaoNode():
 
     def change_pose(self, data_str):
         # data_str = 'name1, name2;target1, target2;pMaxSpeedFraction'
-        print data_str
+        # print data_str
         info = data_str.split(';')
         pNames = info[0].split(',')
         pTargetAngles = [float(x) for x in info[1].split(',')]
         # pTargetAngles = [x * almath.TO_RAD for x in pTargetAngles]  # Convert to radians
         pMaxSpeedFraction = float(info[2])
-        print(pNames, pTargetAngles, pMaxSpeedFraction)
+        # print(pNames, pTargetAngles, pMaxSpeedFraction)
         self.motionProxy.post.angleInterpolationWithSpeed(pNames, pTargetAngles, pMaxSpeedFraction)
 
     def animated_speech(self,parameters):
@@ -146,6 +151,7 @@ class NaoNode():
 
 
     def move_to_pose(self,direction):
+        direction=direction[0]
 
         if direction == 'right':
             self.change_pose('HeadYaw,HeadPitch,LShoulderPitch,LShoulderRoll,LElbowYaw,LElbowRoll,LWristYaw,LHand,LHipYawPitch,LHipRoll,LHipPitch,LKneePitch,LAnklePitch,LAnkleRoll,RHipYawPitch,RHipRoll,RHipPitch,RKneePitch,RAnklePitch,RAnkleRoll,RShoulderPitch,RShoulderRoll,RElbowYaw,RElbowRoll,RWristYaw,RHand;-0.88,0.01,0.93,0.26,-0.45,-1.2,0.01,0.29,-0.6,0.2,-1.53,1.41,0.84,0.0,-0.6,0.0,-1.53,1.41,0.85,0.01,0.96,-0.29,0.53,1.26,-0.05,0.3;0.2')
@@ -158,6 +164,9 @@ class NaoNode():
 
 
     def look_to_other_way(self,relative_to):
+        relative_to=relative_to[0]
+
+
         angles=self.motionProxy.getAngles("Body", True)
         basepose_HeadYaw = angles[0]
         basepose_HeadPitch = angles[1]
@@ -197,6 +206,7 @@ class NaoNode():
             counter += 1
 
 strat=NaoNode(sys.argv[1],sys.argv[2])  #FOR TEST!!!!!!!!!!
+
 #
 # strat=NaoNode('192.168.0.102','left')  #FOR TEST!!!!!!!!!!
 
