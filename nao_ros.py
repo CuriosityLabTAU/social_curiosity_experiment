@@ -41,7 +41,7 @@ class NaoNode():
 
         # wake_up
 
-        self.rest()
+        self.wake_up()
         #ros:
         rospy.init_node('nao_listener'+self.node_name)
         name='to_nao_'+self.node_name

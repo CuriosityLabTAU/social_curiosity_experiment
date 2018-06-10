@@ -105,14 +105,17 @@ class dynamics():
 
             self.publisher[robot].publish(self.parse_behavior(behavior))
 
-        time.sleep(15)
+        time.sleep(10)
 
 
 
         self.interval+=1
 
-        if self.interval<3:
+        if self.interval<5:
             self.publisher_get_next.publish(str(self.interval))
+
+        if self.interval==5:
+            print self.matrix
 
 
 

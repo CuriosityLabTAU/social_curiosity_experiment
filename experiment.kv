@@ -189,78 +189,6 @@
 
 
 <tracking_screen>:
-    Widget:
-        Label:
-            pos: root.width*0.4 , root.height*0.9
-            size: root.width*0.2 , root.height*0.08
-            text:'who are you looking at?'
-            font_size:30
-            color:0,0,0,1
-
-    Widget:
-        ToggleButton:
-            id:looking_center
-            group:1
-            pos: root.width*0.38 , root.height*0.65
-            size: 190, 140
-            background_normal: ''
-            on_release: app.looking_at('center')
-
-            Image:
-                pos: root.width*0.4 , root.height*0.62
-                size: root.width*0.2 , root.height*0.3
-                source: 'nao_site_down.jpg'
-
-
-    Widget:
-        ToggleButton:
-            id:looking_right
-            group:1
-            pos: root.width*0.79 , root.height*0.36
-            size: 155, 170
-            background_normal: ''
-            on_release: app.looking_at('right')
-
-
-            Image:
-                canvas.before:
-                    PushMatrix
-                    Rotate:
-                        angle: 270
-                        origin: self.center
-                canvas.after:
-                    PopMatrix
-
-                pos: root.width*0.79 , root.height*0.38
-                size: root.width*0.3 , root.height*0.2
-                size: 150, 150
-                source: 'nao_site_down.jpg'
-
-
-    Widget:
-        ToggleButton:
-            id:looking_left
-            group:1
-            pos: root.width*0.05 , root.height*0.36
-            size: 155, 170
-            background_normal: ''
-            #on_press: self.background_color = (1,0,0,1)
-            on_release: app.looking_at('left')
-
-
-            Image:
-                pos: root.width*0.05 , root.height*0.38
-                size: root.width*0.3 , root.height*0.2
-                size: 150, 150
-                canvas.before:
-                    PushMatrix
-                    Rotate:
-                        angle: 90
-                        origin: self.center
-                canvas.after:
-                    PopMatrix
-                source: 'nao_site_down.jpg'
-
 
     Widget:
         ToggleButton:
@@ -268,10 +196,10 @@
             group:1
             pos: root.width*0.365 , root.height*0.2
             size: 250, 155
-            text:'Not looking'
+            text:'OK'
             background_normal: ''
             color:0,0,0,1
             font_size:40
-            on_release: app.looking_at('None')
+            on_release: app.run_dynamics()
 
 

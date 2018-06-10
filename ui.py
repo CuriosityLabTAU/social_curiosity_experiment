@@ -107,6 +107,13 @@ class ExperimentApp(App):
         threading._sleep(5)
 
 
+    def run_dynamics(self):
+
+        self.publisher.publish('start')
+
+        threading._sleep(5)
+
+
     def looking_at(self,direction):
 
         self.publisher_eye_tracking.publish(direction)

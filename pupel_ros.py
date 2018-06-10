@@ -33,8 +33,6 @@ class pupel_ros():
         self.pupel_listener()
 
 
-
-
     def pupel_listener(self):
         ctx = zmq.Context()
         # The requester talks to Pupil remote and receives the session unique IPC SUB PORT
@@ -75,6 +73,7 @@ class pupel_ros():
 
                     else:
                         self.publisher_eye_tracking.publish('None')
+
             except:
                 all
 
