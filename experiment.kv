@@ -24,6 +24,28 @@
             text:"192.168.0.109"
             font_size:20
             color:0,0,0,1
+        ToggleButton:
+            group:1
+            pos: root.width*0.4 , root.height*0.53
+            text:'Howie'
+            size: 50, 40
+            on_release: app.update_robot_name('center','Howie')
+        ToggleButton:
+            group:1
+            pos: root.width*0.47 , root.height*0.53
+            text:'Where'
+            size: 50, 40
+            on_release: app.update_robot_name('center','Where')
+        ToggleButton:
+            group:1
+            pos: root.width*0.54 , root.height*0.53
+            text:'Which'
+            size: 50, 40
+            on_release: app.update_robot_name('center','Which')
+
+
+
+
 
 
     Widget:
@@ -49,6 +71,25 @@
             font_size:20
             color:0,0,0,1
 
+        ToggleButton:
+            group:2
+            pos: root.width*0.78 , root.height*0.28
+            text:'Howie'
+            size: 50, 40
+            on_release: app.update_robot_name('right','Howie')
+        ToggleButton:
+            group:2
+            pos: root.width*0.85 , root.height*0.28
+            text:'Where'
+            size: 50, 40
+            on_release: app.update_robot_name('right','Where')
+        ToggleButton:
+            group:2
+            pos: root.width*0.92 , root.height*0.28
+            text:'Which'
+            size: 50, 40
+            on_release: app.update_robot_name('right','Which')
+
     Widget:
 
         Image:
@@ -72,6 +113,25 @@
             text:"192.168.0.110"
             font_size:20
             color:0,0,0,1
+
+        ToggleButton:
+            group:0
+            pos: root.width*0.05 , root.height*0.28
+            text:'Howie'
+            size: 50, 40
+            on_release: app.update_robot_name('left','Howie')
+        ToggleButton:
+            group:0
+            pos: root.width*0.12 , root.height*0.28
+            text:'Where'
+            size: 50, 40
+            on_release: app.update_robot_name('left','Where')
+        ToggleButton:
+            group:0
+            pos: root.width*0.19 , root.height*0.28
+            text:'Which'
+            size: 50, 40
+            on_release: app.update_robot_name('left','Which')
 
 
 

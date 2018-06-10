@@ -2,6 +2,7 @@ import os
 import threading
 import time
 import sys
+import json
 
 
 def intro(subject_id=0, nao_info=[('192.168.0.100','center')]):
@@ -25,7 +26,16 @@ def start_working(subject_id, nao_info):
         os.system('python dynamics.py'+' '+ str(len(nao_info)))
 
     def worker4():
-        os.system('python next_robot.py' + ' ' + str(len(nao_info)))
+        os.system('python next_robot.py')
+
+    def worker5():
+        dict_to_pass={}
+        for i in range((len(nao_info))):
+            dict_to_pass[nao_info[i][2]]=nao_info[i][1]
+        str_to_pass=json.dumps(dict_to_pass)
+
+
+        os.system('python pupel_ros.py' + ' ' +"'"+str_to_pass+"'")
 
 
 
@@ -65,6 +75,11 @@ def start_working(subject_id, nao_info):
 
     t4 = threading.Thread(target=worker4)
     t4.start()
+    threading._sleep(0.2)
+
+
+    t5 = threading.Thread(target=worker5)
+    t5.start()
     threading._sleep(0.2)
 
 

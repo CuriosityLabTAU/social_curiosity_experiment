@@ -18,6 +18,8 @@ import json
 from random import shuffle, sample
 import sys
 import datetime
+from kivy.uix.dropdown import DropDown
+
 
 
 
@@ -68,10 +70,11 @@ class ExperimentApp(App):
         # #ros
         rospy.init_node('ui')
         self.publisher = rospy.Publisher('the_flow', String, queue_size=10)
-        self.publisher_eye_tracking = rospy.Publisher('eye_tracking', String, queue_size=10)
+        # self.publisher_eye_tracking = rospy.Publisher('eye_tracking', String, queue_size=10)
 
-
-
+        self.left_robot_name  ='None'
+        self.center_robot_name='None'
+        self.right_robot_name ='None'
 
         return self.sm
 
@@ -79,11 +82,11 @@ class ExperimentApp(App):
     def run_main(self,subject_id, _nao_info):
         str_for_main = ''
         for nao_inst in _nao_info:
-            str_for_main = str_for_main + nao_inst[0] + '@' + nao_inst[1] + ' '
+            str_for_main = str_for_main + nao_inst[0] + '@' + nao_inst[1] +'@'+ nao_inst[2] + ' '
         os.system('python main.py ' + subject_id + ' ' + str_for_main[:-1])
 
     def start(self,subject_id,nao_ip_center,nao_ip_left,nao_ip_right):
-        self.nao_info = [(nao_ip_left, '0'), (nao_ip_center, '1'), (nao_ip_right, '2')]
+        self.nao_info = [(nao_ip_left, '0',self.left_robot_name), (nao_ip_center, '1',self.center_robot_name), (nao_ip_right, '2',self.right_robot_name)]
         t1 = threading.Thread(target=self.run_main, args=(subject_id, self.nao_info))
         t1.start()
         threading._sleep(25)
@@ -108,6 +111,15 @@ class ExperimentApp(App):
 
         self.publisher_eye_tracking.publish(direction)
 
+    def update_robot_name(self,pos,name):
+        if pos=='right':
+            self.right_robot_name = name
+
+        elif pos=="center":
+            self.center_robot_name = name
+
+        elif pos=="left":
+            self.left_robot_name = name
 
 
 
