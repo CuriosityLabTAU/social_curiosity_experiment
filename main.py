@@ -59,8 +59,8 @@ def start_working(subject_id, nao_info):
 
 
     t1 = threading.Thread(target=worker1)
-    # t1.start()
-    # threading._sleep(0.2)
+    t1.start()
+    threading._sleep(0.2)
 
     for nao in nao_info:
         print 'nao'+str(nao)

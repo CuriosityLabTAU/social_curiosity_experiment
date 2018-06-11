@@ -34,14 +34,27 @@ class NaoNode():
             #trackerProxy
             self.trackerProxy = ALProxy("ALTracker", self.robot_ip, self.port)
 
+            #AutonomousLife
+            self.autonomous = ALProxy("ALAutonomousLife", self.robot_ip, self.port)
+
+
         except Exception,e:
             print "Could not create proxy "
             print "Error was: ",e
             sys.exit(1)
 
         # wake_up
+        # self.wake_up()
 
-        self.wake_up()
+        #autonomous_state
+        # self.set_autonomous_state()
+
+        # rest
+        self.rest()
+
+        #wake_up
+        # self.wake_up()
+
         #ros:
         rospy.init_node('nao_listener'+self.node_name)
         name='to_nao_'+self.node_name
@@ -93,6 +106,14 @@ class NaoNode():
         for text in parameters:
             print("say_text_to_speech", text)
             self.tts.say (str(text))
+
+    def set_autonomous_state(self):
+        # put nao in autonomous state
+        # parameters in the form of ['solitary']
+        # http://doc.aldebaran.com/2-1/naoqi/core/autonomouslife.html
+        # state = str(parameters[0])  # 'solitary'
+        # set the robot to be on autonomous mode
+        self.autonomous.setState('solitary')
 
     def rest(self):
         self.motionProxy.rest()

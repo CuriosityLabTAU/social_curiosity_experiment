@@ -67,11 +67,18 @@ class ExperimentApp(App):
         Window.clearcolor = (1, 1, 1, 1)
         self.sm.add_widget(screen)
 
-        # #ros
+        ###ros
+        #roscore
+        t1 = threading.Thread(target=self.worker1)
+        t1.start()
+        threading._sleep(0.2)
+
+        #ros_node
         rospy.init_node('ui')
         self.publisher = rospy.Publisher('the_flow', String, queue_size=10)
         # self.publisher_eye_tracking = rospy.Publisher('eye_tracking', String, queue_size=10)
 
+        #
         self.left_robot_name  ='None'
         self.center_robot_name='None'
         self.right_robot_name ='None'
@@ -129,7 +136,8 @@ class ExperimentApp(App):
             self.left_robot_name = name
 
 
-
+    def worker1(self):
+        os.system('roscore')
 
     def btn_released(self,btn,func,param1=None,param2=None,param3=None,param4=None):#button configuration
         btn.background_coler=(1,1,1,1)
