@@ -75,6 +75,7 @@ class dynamics():
         step=data.data
 
         if step== 'start':
+            print step
             self.publisher_get_next.publish(str(0))
 
 

@@ -22,6 +22,11 @@ def start_working(subject_id, nao_info):
             return
         os.system('python nao_ros.py' + ' '+ _nao[0]+' '+_nao[1])
 
+    def worker22(_nao):
+        if _nao[0] == '0':
+            return
+        os.system('python nao_subconscious.py' + ' '+ _nao[0]+' '+_nao[1])
+
     def worker3():
         os.system('python dynamics.py'+' '+ str(len(nao_info)))
 
@@ -62,11 +67,20 @@ def start_working(subject_id, nao_info):
     t1.start()
     threading._sleep(0.2)
 
+
+    for nao in nao_info:
+        print 'nao' + str(nao)
+        t22 = threading.Thread(target=worker22, args=(nao,))
+        t22.start()
+        threading._sleep(2.5)
+
     for nao in nao_info:
         print 'nao'+str(nao)
         t2 = threading.Thread(target=worker2,args=(nao,))
         t2.start()
         threading._sleep(2.5)
+
+
 
     t3 = threading.Thread(target=worker3)
     t3.start()
@@ -79,8 +93,8 @@ def start_working(subject_id, nao_info):
 
 
     t5 = threading.Thread(target=worker5)
-    t5.start()
-    threading._sleep(0.2)
+    # t5.start()
+    # threading._sleep(0.2)
 
 
     # t3 = threading.Thread(target=worker3)

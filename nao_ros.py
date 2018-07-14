@@ -5,6 +5,8 @@ import sys
 import random
 import time
 import json
+import threading
+
 
 
 class NaoNode():
@@ -37,27 +39,43 @@ class NaoNode():
             #AutonomousLife
             self.autonomous = ALProxy("ALAutonomousLife", self.robot_ip, self.port)
 
+            # PostureProxy
+            self.postureProxy = ALProxy("ALRobotPosture", self.robot_ip, 9559)
+
+
+            #LEDS Api:
+
+            self.leds = ALProxy("ALLeds", self.robot_ip, self.port)
+            names1 = ["FaceLed0", "FaceLed4"]
+            names2 = ["FaceLed1", "FaceLed3", "FaceLed5", "FaceLed7"]
+            names3 = ["FaceLed2", "FaceLed6"]
+
+            self.leds.createGroup("leds1", names1)
+            self.leds.createGroup("leds3", names3)
+            self.leds.createGroup("leds2", names2)
+
 
         except Exception,e:
             print "Could not create proxy "
             print "Error was: ",e
             sys.exit(1)
 
+
+        #autonomous_state
+        self.set_autonomous_state_off()
+
         # wake_up
         # self.wake_up()
 
-        #autonomous_state
-        # self.set_autonomous_state()
-
-        # rest
-        self.rest()
+        #Sitdown
+        # self.postureProxy.goToPosture("Sit", 1.0)
 
         #wake_up
-        # self.wake_up()
+        self.rest()
 
         #ros:
         rospy.init_node('nao_listener'+self.node_name)
-        name='to_nao_'+self.node_name
+        name='to_nao_subconscious_'+self.node_name
         self.publisher= rospy.Publisher('angles', String, queue_size=10)
         rospy.Subscriber(name, String, self.parse_message)
         rospy.spin()    #FOR TEST!!!!!!!!!!
@@ -107,13 +125,11 @@ class NaoNode():
             print("say_text_to_speech", text)
             self.tts.say (str(text))
 
-    def set_autonomous_state(self):
+    def set_autonomous_state_off(self):
         # put nao in autonomous state
-        # parameters in the form of ['solitary']
+        # parameters in the form of ['solitary','disabled']
         # http://doc.aldebaran.com/2-1/naoqi/core/autonomouslife.html
-        # state = str(parameters[0])  # 'solitary'
-        # set the robot to be on autonomous mode
-        self.autonomous.setState('solitary')
+        self.autonomous.setState('disabled')
 
     def rest(self):
         self.motionProxy.rest()
@@ -225,6 +241,32 @@ class NaoNode():
             time.sleep(0.5)
             self.change_pose('HeadYaw;' + str(basepose) + ';0.08')
             counter += 1
+
+
+    def blink(self):
+        self.leds.off("leds1")
+        self.leds.off("leds2")
+        self.leds.off("leds3")
+        self.leds.on("leds3")
+        self.leds.on("leds2")
+        self.leds.on("leds1")
+
+
+    def close_eyes(self):
+        rDuration = 0.75
+        self.leds.post.fadeRGB("FaceLed0", 0x000000, rDuration)
+        self.leds.post.fadeRGB("FaceLed1", 0x000000, rDuration)
+        self.leds.post.fadeRGB("FaceLed2", 0x000000, rDuration)
+        self.leds.post.fadeRGB("FaceLed3", 0x000000, rDuration)
+        self.leds.post.fadeRGB("FaceLed4", 0x000000, rDuration)
+        self.leds.post.fadeRGB("FaceLed5", 0x000000, rDuration)
+        self.leds.post.fadeRGB("FaceLed6", 0x000000, rDuration)
+        self.leds.fadeRGB("FaceLed7", 0x000000, rDuration)
+        time.sleep(2)
+        self.leds.on("leds3")
+        self.leds.on("leds2")
+        self.leds.on("leds1")
+
 
 strat=NaoNode(sys.argv[1],sys.argv[2])  #FOR TEST!!!!!!!!!!
 
