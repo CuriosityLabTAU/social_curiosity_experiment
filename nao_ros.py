@@ -273,6 +273,10 @@ class NaoNode():
         self.leds.on("leds2")
         self.leds.on("leds1")
 
+    def move_head_naturally(self):
+
+
+
 
 strat=NaoNode(sys.argv[1],sys.argv[2])  #FOR TEST!!!!!!!!!!
 

@@ -5,6 +5,7 @@ import sys
 import random
 import time
 import json
+import numpy as np
 
 
 
@@ -54,13 +55,14 @@ class NaoSubconscious():
 
     def alive(self,data):
         while True:
-            message = self.parse_behavior({'action': 'blink'})
+            blinking_message = self.parse_behavior({'action': 'blink'})
             if self.conscious_movement == False:
-                    self.publisher.publish(message)
+                    self.publisher.publish(blinking_message)
                     time.sleep(0.5)
-                    self.publisher.publish(message)
+                    self.publisher.publish(blinking_message)
                     time_now=time.time()
-                    while self.conscious_movement == False and (time.time()-time_now)<3.5:  #like sleep
+                    time_between_blinks =np.random.exponential(3.5)
+                    while self.conscious_movement == False and (time.time()-time_now)<time_between_blinks:  #like sleep
                         pass
 
 strat=NaoSubconscious(sys.argv[1],sys.argv[2])
