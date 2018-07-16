@@ -77,8 +77,14 @@ class NaoNode():
         rospy.init_node('nao_listener'+self.node_name)
         name='to_nao_subconscious_'+self.node_name
         self.publisher= rospy.Publisher('angles', String, queue_size=10)
+        self.publisher_to_nao= rospy.Publisher('to_nao_'+self.node_name, String, queue_size=10)
+
         rospy.Subscriber(name, String, self.parse_message)
-        rospy.spin()    #FOR TEST!!!!!!!!!!
+        rospy.spin()
+
+
+    def parse_behavior(self, _dict):
+        return json.dumps(_dict)
 
     def parse_message(self, message):
         # message is json string in the form of:  {'action': 'run_behavior', 'parameters': ["movements/introduction_all_0",...]}
@@ -97,7 +103,7 @@ class NaoNode():
             parameters = message_dict['parameters']
         else:
             parameters = ""
-        print(str("self." + action + "('" + str(parameters) + "')"))
+        # print(str("self." + action + "('" + str(parameters) + "')"))
         eval(str("self." + action + "(" + str(parameters) + ")"))
 
     def run_behavior(self, parameters):

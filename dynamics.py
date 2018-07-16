@@ -20,6 +20,8 @@ class dynamics():
         #center|
         #right |
 
+        self.number_of_naos=number_of_naos
+
         self.interval=0
 
         self.matrix = np.random.random_integers(-1, 1, (3, 3))
@@ -51,10 +53,18 @@ class dynamics():
         #ros:
         rospy.init_node('dynamics')
         self.publisher ={}
+        self.publisher_alive ={}
+
         for nao in range(number_of_naos):
             name = 'to_nao_' + str(nao)
             print name
             self.publisher[nao]=rospy.Publisher(name, String, queue_size=10)
+
+        #alive
+        for nao in range(number_of_naos):
+            name = 'alive' + str(nao)
+            print name
+            self.publisher_alive[nao] = rospy.Publisher(name, String, queue_size=10)
 
         self.publisher_get_next = rospy.Publisher('get_next', String, queue_size=10)
 
@@ -74,7 +84,11 @@ class dynamics():
     def flow_handler(self,data):
         step=data.data
 
-        if step== 'start':
+        if step=='alive':
+            for nao in range(self.number_of_naos):
+                self.publisher_alive[nao].publish(self.parse_behavior({'action': 'alive'}))
+
+        elif step== 'start':
             print step
             self.publisher_get_next.publish(str(0))
 

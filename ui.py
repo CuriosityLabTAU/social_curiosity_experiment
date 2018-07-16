@@ -109,7 +109,7 @@ class ExperimentApp(App):
 
         self.sm.current = "tracking_screen"
 
-        self.publisher.publish('start')
+        self.publisher.publish('alive')
 
         threading._sleep(5)
 
