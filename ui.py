@@ -69,9 +69,9 @@ class ExperimentApp(App):
 
         ###ros
         #roscore
-        t1 = threading.Thread(target=self.worker1)
-        t1.start()
-        threading._sleep(0.2)
+        # t1 = threading.Thread(target=self.worker1)
+        # t1.start()
+        # threading._sleep(0.2)
 
         #ros_node
         rospy.init_node('ui')
@@ -109,6 +109,7 @@ class ExperimentApp(App):
 
         self.sm.current = "tracking_screen"
 
+        print 'publish alive'
         self.publisher.publish('alive')
 
         threading._sleep(5)
@@ -119,6 +120,9 @@ class ExperimentApp(App):
         self.publisher.publish('start')
 
         threading._sleep(5)
+
+
+
 
 
     def looking_at(self,direction):

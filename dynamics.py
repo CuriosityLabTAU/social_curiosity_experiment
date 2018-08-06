@@ -53,18 +53,21 @@ class dynamics():
         #ros:
         rospy.init_node('dynamics')
         self.publisher ={}
-        self.publisher_alive ={}
+        self.publisher_alive   ={}
+        self.publisher_blinking={}
 
         for nao in range(number_of_naos):
             name = 'to_nao_' + str(nao)
             print name
             self.publisher[nao]=rospy.Publisher(name, String, queue_size=10)
 
-        #alive
+        #alive & blinking
         for nao in range(number_of_naos):
-            name = 'alive' + str(nao)
-            print name
-            self.publisher_alive[nao] = rospy.Publisher(name, String, queue_size=10)
+            name_alive   = 'alive'    + str(nao)
+            name_blinking= 'blinking' + str(nao)
+            self.publisher_alive[nao]    = rospy.Publisher(name_alive, String, queue_size=10)
+            self.publisher_blinking[nao] = rospy.Publisher(name_blinking, String, queue_size=10)
+
 
         self.publisher_get_next = rospy.Publisher('get_next', String, queue_size=10)
 
@@ -85,14 +88,17 @@ class dynamics():
         step=data.data
 
         if step=='alive':
+            print 'alive in dynamics'
             for nao in range(self.number_of_naos):
                 self.publisher_alive[nao].publish(self.parse_behavior({'action': 'alive'}))
+                self.publisher_blinking[nao].publish(self.parse_behavior({'action': 'blinking'}))
+
 
         elif step== 'start':
             print step
             self.publisher_get_next.publish(str(0))
-
-
+            # for nao in range(self.number_of_naos):
+            #     self.publisher[nao].publish(self.parse_behavior({'action':'agree'}))
 
     def run_dynamics(self,data):
 
@@ -119,6 +125,8 @@ class dynamics():
             behavior=random.choice(self.behaviors[relationship][direction_for_behavior])
 
             self.publisher[robot].publish(self.parse_behavior(behavior))
+
+            time.sleep(1)
 
         time.sleep(10)
 

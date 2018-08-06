@@ -14,19 +14,26 @@ class NaoSubconscious():
         self.port = 9559
         self.robot_ip=_robot_ip
         self.node_name=_node_name
+        self.current_relationship = 1
+
 
         self.conscious_movement = False
+        self.blinking_on=True
 
         #ros:
         rospy.init_node('nao_subconscious'+self.node_name)
         name_publisher ='to_nao_subconscious_'+self.node_name
         name_subscriber='to_nao_'+self.node_name
         name_subscriber_alive='alive'+self.node_name
+        name_subscriber_blinking='blinking'+self.node_name
+
 
 
         self.publisher= rospy.Publisher(name_publisher, String, queue_size=10)
         rospy.Subscriber(name_subscriber, String, self.parse_message)
         rospy.Subscriber(name_subscriber_alive, String, self.alive)
+        rospy.Subscriber(name_subscriber_blinking, String, self.blinking)
+
 
         rospy.spin()
 
@@ -43,27 +50,43 @@ class NaoSubconscious():
 
         action = str(message_dict['action'])
 
-        print 'here'
+        print action
 
         if action == "natural_motion":
             self.conscious_movement = False
+
+        elif action == "stop_all_subconscious":
+            self.conscious_movement = True
+            self.blinking_on = False
 
         else:
             self.conscious_movement = True
             self.publisher.publish(message)
 
 
-    def alive(self,data):
+    def blinking(self,data):
         while True:
-            blinking_message = self.parse_behavior({'action': 'blink'})
+            if self.blinking_on == True:
+                blinking_message = self.parse_behavior({'action': 'blink'})
+            self.publisher.publish(blinking_message)
+            time_now=time.time()
+            time_between_blinks =np.random.exponential(3.5)
+            while self.blinking_on == True and (time.time()-time_now)<time_between_blinks:  #like sleep
+                pass
+
+
+    def alive(self, data):
+        message = self.parse_behavior({'action': 'move_head_naturally','parameters':[str(self.current_relationship)]})
+        while True:
             if self.conscious_movement == False:
-                    self.publisher.publish(blinking_message)
-                    time.sleep(0.5)
-                    self.publisher.publish(blinking_message)
-                    time_now=time.time()
-                    time_between_blinks =np.random.exponential(3.5)
-                    while self.conscious_movement == False and (time.time()-time_now)<time_between_blinks:  #like sleep
-                        pass
+                self.publisher.publish(message)
+            time_move = np.random.exponential(3)
+            time_now = time.time()
+            while self.conscious_movement == False and (time.time() - time_now) < time_move:  # like sleep
+                pass
+
+
+
 
 strat=NaoSubconscious(sys.argv[1],sys.argv[2])
 

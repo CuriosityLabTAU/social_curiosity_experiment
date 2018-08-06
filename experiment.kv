@@ -21,7 +21,7 @@
             size: root.width*0.2 , root.height*0.065
             #padding_x: self.width/3
             #padding_y: ( self.height - self.line_height ) / 2
-            text:"192.168.0.102"
+            text:"192.168.0.100"
             font_size:20
             color:0,0,0,1
         ToggleButton:
@@ -110,7 +110,7 @@
             id:nao_ip_left
             pos: root.width*0.05 , root.height*0.35
             size: root.width*0.2 , root.height*0.065
-            text:"192.168.0.100"
+            text:"192.168.0.102"
             font_size:20
             color:0,0,0,1
 
@@ -191,7 +191,7 @@
 <tracking_screen>:
 
     Widget:
-        ToggleButton:
+        Button:
             id:not_looking
             group:1
             pos: root.width*0.365 , root.height*0.2
@@ -200,6 +200,6 @@
             background_normal: ''
             color:0,0,0,1
             font_size:40
-            on_release: app.run_dynamics()
+            on_press: app.run_dynamics()
 
 
