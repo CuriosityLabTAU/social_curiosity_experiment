@@ -42,6 +42,9 @@ class NaoNode():
             # PostureProxy
             self.postureProxy = ALProxy("ALRobotPosture", self.robot_ip, 9559)
 
+            # PostureProxy
+            self.systemProxy = ALProxy("ALSystem", self.robot_ip, 9559)
+
 
             #LEDS Api:
 
@@ -69,16 +72,18 @@ class NaoNode():
 
 
         #autonomous_state
-        # self.set_autonomous_state_off()
+        self.set_autonomous_state_off()
 
         # wake_up
-        # self.wake_up()
+        self.wake_up()
 
         #Sitdown
         self.postureProxy.goToPosture("Sit", 1.0)
 
         #wake_up
         # self.rest()
+
+        robot_name=self.systemProxy.robotName()
 
         self.leds.off("ChestLeds")
 
@@ -304,14 +309,29 @@ class NaoNode():
         self.leds.on("leds1")
 
     def move_head_naturally(self,_current_relationship):
+        print _current_relationship[0]
+        current_relationship=float(_current_relationship[0])
+        if current_relationship==-1:
+            factor=1
+        else:
+            factor= max(0.5, 1-current_relationship)
+
         angles=self.motionProxy.getAngles("Body", True)
         basepose_HeadYaw = angles[0]
         basepose_HeadPitch = angles[1]
 
-        self.change_pose_util('HeadYaw,HeadPitch;' + str(min(max(basepose_HeadYaw + random.uniform(-0.25,0.25),-1.05),1.05)) +',' + str(min(max(basepose_HeadYaw + random.uniform(-0.1,0.1),-0.15),0.3)) + ';0.045')
+        self.change_pose_util('HeadYaw,HeadPitch;' + str(min(max(basepose_HeadYaw + factor*random.uniform(-0.25,0.25),-1.05),1.05)) +',' + str(min(max(basepose_HeadYaw + factor*random.uniform(-0.1,0.1),-0.15),0.3)) + ';0.045')
 
     def back_to_live(self):
+        time.sleep(2)
         self.publisher_to_nao.publish(self.parse_behavior({'action':'natural_motion'}))
+
+    def end_work(self):
+        # Sitdown
+        self.postureProxy.goToPosture("Sit", 1.0)
+
+        # wake_up
+        self.rest()
 
 
 

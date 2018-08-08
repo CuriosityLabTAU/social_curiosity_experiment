@@ -76,8 +76,10 @@ class next_robot():
         # next_robot=str(self.position.keys()[self.position.values().index(chosen_robot)])
         #
         # print 'next_robot:-=----',next_robot
-        next_robot=str(randint(0, 2))
+        next_robot=str(randint(0, 3))
         print 'mext robot```````````````````:', next_robot
+        if next_robot=='3':
+            next_robot=='h'
         self.publisher_next.publish(next_robot)
 
         # return self.position.keys()[self.position.values().index(chosen_robot)]

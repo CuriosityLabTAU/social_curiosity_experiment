@@ -33,6 +33,9 @@ class Calibration_screen(BoxLayout):
 class Tracking_screen(BoxLayout):
     pass
 
+class Stop_screen(BoxLayout):
+    pass
+
 class ExperimentApp(App):
 
     subject_id = 0
@@ -47,6 +50,8 @@ class ExperimentApp(App):
         self.config = Config()
         self.calibration_screen= Calibration_screen()
         self.tracking_screen=Tracking_screen()
+        self.stop_screen=Stop_screen()
+
 
         # defines the screen manager, moves between forms
         self.sm = ScreenManager()
@@ -64,6 +69,12 @@ class ExperimentApp(App):
 
         screen = Screen(name='tracking_screen')
         screen.add_widget(self.tracking_screen)
+        Window.clearcolor = (1, 1, 1, 1)
+        self.sm.add_widget(screen)
+
+
+        screen = Screen(name='stop_screen')
+        screen.add_widget(self.stop_screen)
         Window.clearcolor = (1, 1, 1, 1)
         self.sm.add_widget(screen)
 
@@ -138,6 +149,13 @@ class ExperimentApp(App):
 
         elif pos=="left":
             self.left_robot_name = name
+
+    def exit_experiment(self):
+        self.publisher.publish('stop')
+        self.sm.current = "stop_screen"
+        #stop ros bag ~~~~~
+
+
 
 
     def worker1(self):

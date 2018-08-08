@@ -6,7 +6,7 @@ import operator
 import sys
 import json
 import random
-
+import pandas as pd
 
 
 # from nao_ros import NaoNode
@@ -15,7 +15,7 @@ import random
 
 class dynamics():
     def __init__(self,number_of_naos):
-        #      |left | center | right
+        #      |left | center | right |human
         #left  |
         #center|
         #right |
@@ -24,22 +24,57 @@ class dynamics():
 
         self.interval=0
 
-        self.matrix = np.random.random_integers(-1, 1, (3, 3))
+        self.matrix = np.random.rand(3, 4)
 
-        self.behaviors={-1:{
-                        "left"  :[{'action':'disagree'},{'action':'look_to_other_way','parameters':['left']},{'action':'run_behavior','parameters':['social_curiosity/close_hands']}],
-                        "center":[{'action':'disagree'},{'action':'look_to_other_way','parameters':['center']},{'action':'run_behavior','parameters':['social_curiosity/close_hands']}],
-                        "right" :[{'action':'disagree'},{'action':'look_to_other_way','parameters':['right']},{'action':'run_behavior','parameters':['social_curiosity/close_hands']}]},
+        self.behaviors={0:{
+                        "left"  :[{'action':'run_behavior','parameters':['social_curiosity/close_hands']}],
+                        "center":[{'action':'run_behavior','parameters':['social_curiosity/close_hands']}],
+                        "right" :[{'action':'run_behavior','parameters':['social_curiosity/close_hands']}]},
 
-                         0:{
+                        0.125: {
+                        "left":   [{'action': 'look_to_other_way', 'parameters': ['left']}],
+                        "center": [{'action': 'look_to_other_way', 'parameters': ['center']}],
+                        "right":  [{'action': 'look_to_other_way', 'parameters': ['right']}]},
+
+                        0.25: {
+                        "left": [{'action': 'disagree'}],
+                        "center": [{'action': 'disagree'}],
+                        "right": [{'action': 'disagree'}]},
+
+
+                        0.375:{
                         "left"  :[{'action':'run_behavior','parameters':['social_curiosity/neutral']},{'action': 'move_to_pose', 'parameters': ['left']}],
                         "center":[{'action':'run_behavior','parameters':['social_curiosity/neutral']},{'action': 'move_to_pose', 'parameters': ['center']}],
                         "right" :[{'action':'run_behavior','parameters':['social_curiosity/neutral']},{'action': 'move_to_pose', 'parameters': ['right']}]},
 
-                         1:{
-                        "left"  :[{'action':'agree'},{'action':'run_behavior','parameters':['social_curiosity/open_hands']},{'action':'run_behavior','parameters':['social_curiosity/left_forward']}],
-                        "center":[{'action':'agree'},{'action':'run_behavior','parameters':['social_curiosity/open_hands']},{'action':'run_behavior','parameters':['social_curiosity/center_forward']}],
-                        "right" :[{'action':'agree'},{'action':'run_behavior','parameters':['social_curiosity/open_hands']},{'action':'run_behavior','parameters':['social_curiosity/right_forward']}]}}
+                        0.5: {
+                        "left":   [{'action': 'run_behavior', 'parameters': ['social_curiosity/neutral']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/neutral']}],
+                        "right":  [{'action': 'run_behavior', 'parameters': ['social_curiosity/neutral']}]},
+
+                        0.625: {
+                        "left":   [{'action': 'move_to_pose', 'parameters': ['left']}],
+                        "center": [{'action': 'move_to_pose', 'parameters': ['center']}],
+                        "right":  [{'action': 'move_to_pose', 'parameters': ['right']}]},
+
+                        0.75:{
+                        "left"  :[{'action':'agree'}],
+                        "center":[{'action':'agree'}],
+                        "right" :[{'action':'agree'}]},
+
+                        0.875:{
+                        "left":   [{'action': 'run_behavior', 'parameters': ['social_curiosity/open_hands']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/open_hands']}],
+                        "right":  [{'action': 'run_behavior', 'parameters': ['social_curiosity/open_hands']}]},
+
+                        1:{
+                        "left"  :[{'action': 'run_behavior', 'parameters': ['social_curiosity/left_forward']}],
+                        "center":[{'action': 'run_behavior', 'parameters': ['social_curiosity/center_forward']}],
+                        "right" :[{'action': 'run_behavior', 'parameters': ['social_curiosity/right_forward']}]}}
+
+        self.discrete_behaviors=self.behaviors.keys()
+
+
 
         self.transformation={0:{1:'left',2:'center','h':'right',},
                              1:{0:'right',2:'left','h':'center'},
@@ -81,9 +116,6 @@ class dynamics():
     def parse_behavior(self, _dict):
         return json.dumps(_dict)
 
-
-
-
     def flow_handler(self,data):
         step=data.data
 
@@ -100,17 +132,28 @@ class dynamics():
             # for nao in range(self.number_of_naos):
             #     self.publisher[nao].publish(self.parse_behavior({'action':'agree'}))
 
+        elif step == 'stop':
+            for nao in range(self.number_of_naos):
+                self.publisher[nao].publish(self.parse_behavior({'action': 'end_work'}))
+
+
     def run_dynamics(self,data):
 
         print '------'
         secondary_robots=[0,1,2]
 
         #config robots
-        main_robot=int(data.data)
-        secondary_robots.remove(main_robot)
+        if data.data=='h':
+            main_robot = 'h'
+        else:
+            main_robot=int(data.data)
+            secondary_robots.remove(main_robot)
 
         #main robot - main behavior
-        self.publisher[main_robot].publish(self.parse_behavior({'action':'run_behavior','parameters':['social_curiosity/talk/1']}))
+        if main_robot!='h':
+            self.publisher[main_robot].publish(self.parse_behavior({'action':'run_behavior','parameters':['social_curiosity/talk/1']}))
+            self.publisher[main_robot].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(1.0)]}))
+
 
         #secondary_robots look at main robot
         for robot in secondary_robots:
@@ -119,18 +162,27 @@ class dynamics():
         time.sleep(15)
 
         #secondary_robots look at main behaviour
+        if main_robot=='h':
+            main_robot=4
         for robot in secondary_robots:
             relationship=self.matrix[robot,main_robot]
             direction_for_behavior=self.transformation[robot][main_robot]
-            behavior=random.choice(self.behaviors[relationship][direction_for_behavior])
+            chosen_behaviour=self.choose_behaviour(relationship)
 
+            behavior=random.choice(self.behaviors[chosen_behaviour][direction_for_behavior])
+
+            self.publisher[robot].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(relationship)]}))
             self.publisher[robot].publish(self.parse_behavior(behavior))
 
             time.sleep(1)
 
-        time.sleep(10)
+        time.sleep(5)
 
 
+        for robot in secondary_robots:
+            self.publisher[robot].publish(self.parse_behavior({'action': 'change_current_relationship', 'parameters': [str(-1.0)]}))
+
+        time.sleep(5)
 
         self.interval+=1
 
@@ -155,6 +207,15 @@ class dynamics():
 
         self.publisher['left'].publish('{\"action\": \"rest\"}')
 
+    def choose_behaviour(self,relationship):
+        pick_randomly=np.random.normal(loc=relationship, scale=0.78)
+        return min(self.discrete_behaviors, key=lambda x: abs(x - pick_randomly))
+
+        # from numpy.random import choice
+        # probability_distribution=[]
+        # list_of_candidates=[]
+        # draw = np.random.choice(list_of_candidates, 1, p=probability_distribution)
+        # return draw
 
 if len(sys.argv) > 1:
     start=dynamics(int(sys.argv[1]))
