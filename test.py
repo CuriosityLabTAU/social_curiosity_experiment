@@ -1,26 +1,28 @@
-#
-#
-#
-# import pandas as pd
-#
-# AMT_data=pd.read_csv('AMT_demo.csv')
-# print AMT_data
+import numpy as np
 
 
-import sh
-#
+from random import randint
 
+# number_of_bins=9
 #
-# for num in range(10,40):
-#     ip = "192.168.0."+str(num)
+# matrix = np.random.rand(3, 4)
+# bins = [i*(1.0/number_of_bins) for i in xrange(number_of_bins+1)]
+# labels = [(bins[i]+bins[i+1])/2.0 for i in xrange(number_of_bins)]
+# labels=list(np.around(np.array(labels),3))
 #
-#     try:
-#         sh.ping(ip, "-c 1",_out="/dev/null")
-#         print "PING ",ip , "OK"
-#     except sh.ErrorReturnCode_1:
-#         print "PING ", ip, "FAILED"
-import os
-os.system('NetResView.exe /DisplayComputers 1 /RetrieveIPAddresses /stext ipfile')
-my_file = open('ipfile')
-for line in my_file :
-    print my_file.readline()
+# print labels
+# print matrix
+#
+# for i in range(matrix.shape[0]):
+#     for j in range(matrix.shape[1]):
+#         for _bin in range(len(bins)-1):
+#             if matrix[i,j]>=bins[_bin] and matrix[i,j] < bins[_bin+1]:
+#                 matrix[i, j]=labels[_bin]
+# #
+# print matrix
+
+# draw = np.random.choice([1,2], 1, p=[0.5,0.5])
+# print draw
+next_robot=str(randint(0, 3))
+
+print next_robot=='3'

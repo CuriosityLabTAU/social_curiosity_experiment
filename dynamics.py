@@ -7,6 +7,7 @@ import sys
 import json
 import random
 import pandas as pd
+from numpy.random import choice
 
 
 # from nao_ros import NaoNode
@@ -25,56 +26,51 @@ class dynamics():
         self.interval=0
 
         self.matrix = np.random.rand(3, 4)
+        self.bin_matrix()
 
         self.behaviors={0:{
                         "left"  :[{'action':'run_behavior','parameters':['social_curiosity/close_hands']}],
                         "center":[{'action':'run_behavior','parameters':['social_curiosity/close_hands']}],
                         "right" :[{'action':'run_behavior','parameters':['social_curiosity/close_hands']}]},
 
-                        0.125: {
+                        1: {
                         "left":   [{'action': 'look_to_other_way', 'parameters': ['left']}],
                         "center": [{'action': 'look_to_other_way', 'parameters': ['center']}],
                         "right":  [{'action': 'look_to_other_way', 'parameters': ['right']}]},
 
-                        0.25: {
+                        2: {
                         "left": [{'action': 'disagree'}],
                         "center": [{'action': 'disagree'}],
                         "right": [{'action': 'disagree'}]},
 
-
-                        0.375:{
-                        "left"  :[{'action':'run_behavior','parameters':['social_curiosity/neutral']},{'action': 'move_to_pose', 'parameters': ['left']}],
-                        "center":[{'action':'run_behavior','parameters':['social_curiosity/neutral']},{'action': 'move_to_pose', 'parameters': ['center']}],
-                        "right" :[{'action':'run_behavior','parameters':['social_curiosity/neutral']},{'action': 'move_to_pose', 'parameters': ['right']}]},
-
-                        0.5: {
+                        3: {
                         "left":   [{'action': 'run_behavior', 'parameters': ['social_curiosity/neutral']}],
                         "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/neutral']}],
                         "right":  [{'action': 'run_behavior', 'parameters': ['social_curiosity/neutral']}]},
 
-                        0.625: {
+                        4: {
                         "left":   [{'action': 'move_to_pose', 'parameters': ['left']}],
                         "center": [{'action': 'move_to_pose', 'parameters': ['center']}],
                         "right":  [{'action': 'move_to_pose', 'parameters': ['right']}]},
 
-                        0.75:{
+                        5:{
                         "left"  :[{'action':'agree'}],
                         "center":[{'action':'agree'}],
                         "right" :[{'action':'agree'}]},
 
-                        0.875:{
+                        6:{
                         "left":   [{'action': 'run_behavior', 'parameters': ['social_curiosity/open_hands']}],
                         "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/open_hands']}],
                         "right":  [{'action': 'run_behavior', 'parameters': ['social_curiosity/open_hands']}]},
 
-                        1:{
+                        7:{
                         "left"  :[{'action': 'run_behavior', 'parameters': ['social_curiosity/left_forward']}],
                         "center":[{'action': 'run_behavior', 'parameters': ['social_curiosity/center_forward']}],
                         "right" :[{'action': 'run_behavior', 'parameters': ['social_curiosity/right_forward']}]}}
 
-        self.discrete_behaviors=self.behaviors.keys()
+        self.discrete_behaviors=sorted(self.behaviors.keys())
 
-
+        self.probs_from_AMT = pd.read_csv('probs_from_AMT.csv')
 
         self.transformation={0:{1:'left',2:'center','h':'right',},
                              1:{0:'right',2:'left','h':'center'},
@@ -146,6 +142,7 @@ class dynamics():
         if data.data=='h':
             main_robot = 'h'
         else:
+            print data.data
             main_robot=int(data.data)
             secondary_robots.remove(main_robot)
 
@@ -159,7 +156,7 @@ class dynamics():
         for robot in secondary_robots:
             self.publisher[robot].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[robot][main_robot]]}))
 
-        time.sleep(15)
+        time.sleep(8)
 
         #secondary_robots look at main behaviour
         if main_robot=='h':
@@ -208,14 +205,22 @@ class dynamics():
         self.publisher['left'].publish('{\"action\": \"rest\"}')
 
     def choose_behaviour(self,relationship):
-        pick_randomly=np.random.normal(loc=relationship, scale=0.78)
-        return min(self.discrete_behaviors, key=lambda x: abs(x - pick_randomly))
+        probability_distribution=self.probs_from_AMT[str(relationship)].tolist()
+        list_of_candidates=self.discrete_behaviors
+        draw = np.random.choice(list_of_candidates, 1, p=probability_distribution)
+        return draw[0]
 
-        # from numpy.random import choice
-        # probability_distribution=[]
-        # list_of_candidates=[]
-        # draw = np.random.choice(list_of_candidates, 1, p=probability_distribution)
-        # return draw
+    def bin_matrix(self):
+        number_of_bins = 9
+        bins = [i * (1.0 / number_of_bins) for i in xrange(number_of_bins + 1)]
+        labels = [(bins[i] + bins[i + 1]) / 2.0 for i in xrange(number_of_bins)]
+        labels = list(np.around(np.array(labels), 3))
+
+        for i in range(self.matrix.shape[0]):
+            for j in range(self.matrix.shape[1]):
+                for _bin in range(len(bins) - 1):
+                    if self.matrix[i, j] >= bins[_bin] and self.matrix[i, j] < bins[_bin + 1]:
+                        self.matrix[i, j] = labels[_bin]
 
 if len(sys.argv) > 1:
     start=dynamics(int(sys.argv[1]))

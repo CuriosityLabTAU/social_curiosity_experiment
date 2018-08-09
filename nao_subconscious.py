@@ -55,8 +55,6 @@ class NaoSubconscious():
         else:
             parameters = ""
 
-        print action
-
         if action == "natural_motion":
             self.conscious_movement = False
 

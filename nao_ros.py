@@ -309,12 +309,11 @@ class NaoNode():
         self.leds.on("leds1")
 
     def move_head_naturally(self,_current_relationship):
-        print _current_relationship[0]
         current_relationship=float(_current_relationship[0])
         if current_relationship==-1:
             factor=1
         else:
-            factor= max(0.5, 1-current_relationship)
+            factor= max(0.3, 1-current_relationship)
 
         angles=self.motionProxy.getAngles("Body", True)
         basepose_HeadYaw = angles[0]
