@@ -103,8 +103,8 @@ class ExperimentApp(App):
             str_for_main = str_for_main + nao_inst[0] + '@' + nao_inst[1] +'@'+ nao_inst[2] + ' '
         os.system('python main.py ' + subject_id + ' ' + str_for_main[:-1])
 
-    def start(self,subject_id,nao_ip_center,nao_ip_left,nao_ip_right):
-        self.nao_info = [(nao_ip_left, '0',self.left_robot_name), (nao_ip_center, '1',self.center_robot_name), (nao_ip_right, '2',self.right_robot_name)]
+    def start(self,subject_id,nao_ip_center,nao_ip_left,nao_ip_right,experimenter_ip):
+        self.nao_info = [(nao_ip_left, '0',self.left_robot_name), (nao_ip_center, '1',self.center_robot_name), (nao_ip_right, '2',self.right_robot_name),(experimenter_ip, '3','experimenter')]
         t1 = threading.Thread(target=self.run_main, args=(subject_id, self.nao_info))
         t1.start()
         threading._sleep(25)
@@ -161,7 +161,7 @@ class ExperimentApp(App):
     def worker1(self):
         os.system('roscore')
 
-    def btn_released(self,btn,func,param1=None,param2=None,param3=None,param4=None):#button configuration
+    def btn_released(self,btn,func,param1=None,param2=None,param3=None,param4=None,param5=None):#button configuration
         btn.background_coler=(1,1,1,1)
         if param1 is not None:
             func_param1=param1.text
@@ -171,7 +171,11 @@ class ExperimentApp(App):
                     func_param3 = param3.text
                     if param4 is not None:
                         func_param4 = param4.text
-                        func(func_param1, func_param2, func_param3, func_param4)
+                        if param5 is not None:
+                            func_param5 = param5.text
+                            func(func_param1, func_param2, func_param3, func_param4,func_param5)
+                        else:
+                            func(func_param1, func_param2, func_param3, func_param4)
                     else:
                         func(func_param1, func_param2, func_param3)
                 else:

@@ -21,12 +21,15 @@ class dynamics():
         #center|
         #right |
 
+        self.experimenter_nao=3
+
         self.number_of_naos=number_of_naos
+
+        self.experiment_step=0
 
         self.interval=0
 
-        self.matrix = np.random.rand(3, 4)
-        self.bin_matrix()
+        self.matrix = self.bin_matrix(np.random.rand(3, 4))
 
         self.behaviors={0:{
                         "left"  :[{'action':'run_behavior','parameters':['social_curiosity/close_hands']}],
@@ -64,9 +67,69 @@ class dynamics():
                         "right":  [{'action': 'run_behavior', 'parameters': ['social_curiosity/open_hands']}]},
 
                         7:{
-                        "left"  :[{'action': 'run_behavior', 'parameters': ['social_curiosity/left_forward']}],
+                        "left"  :[{'action': 'run_behavior', 'parameters': ['social_curiosity/right_forward']}],
                         "center":[{'action': 'run_behavior', 'parameters': ['social_curiosity/center_forward']}],
-                        "right" :[{'action': 'run_behavior', 'parameters': ['social_curiosity/right_forward']}]}}
+                        "right" :[{'action': 'run_behavior', 'parameters': ['social_curiosity/left_forward']}]},
+
+                        8:{
+                        "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_left']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_center']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_center']}]},
+
+                        9:{
+                        "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_hand_behind_head_left']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_behind_head_center']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_behind_head_right']}]},
+
+                        10:{
+                        "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_lean_back']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/center_hand_lean_forward']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_lean_back']}]},
+
+                        11:{
+                        "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_random']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_hand_random']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_hand_random']}]},
+
+                        12:{
+                        "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_hand_random']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_random']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_random']}]},
+
+                        13:{
+                        "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_2']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_2']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_2']}]},
+
+                        14:{
+                        "left":   [{'action':'look_down'}],
+                        "center": [{'action':'look_down'}],
+                        "right":  [{'action':'look_down'}]}}
+
+        self.metadata_for_experiment_steps = {
+                                        0: {'matrix':self.bin_matrix(np.random.rand(3, 4)),
+                                            'turns' :['0','1','2','h''0','1','2','h'],
+                                            'question_time':False,
+                                            'experimenter_before':None,
+                                            'experimenter_after' : None},
+
+                                        1: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
+                                            'turns': ['0', '1', '2', 'h''0', '1', '2', 'h'],
+                                            'question_time': False,
+                                            'experimenter_before': [['action',time]],
+                                            'experimenter_after': None},
+
+                                        2: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
+                                            'turns': ['0', '1', '2', 'h''0', '1', '2', 'h']},
+
+                                        3: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
+                                            'turns': ['0', '1', '2', 'h''0', '1', '2', 'h']},
+
+                                        4: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
+                                            'turns': ['0', '1', '2', 'h''0', '1', '2', 'h']},
+
+                                        5: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
+                                            'turns': ['0', '1', '2', 'h''0', '1', '2', 'h']}}
 
         self.discrete_behaviors=sorted(self.behaviors.keys())
 
@@ -79,6 +142,7 @@ class dynamics():
         self.position={0:'left',1:'center',2:'right'}
 
         self.next_robot_data={'left':[],'center':[],'right':[]}
+
         self.present_direction=0
 
         #ros:
@@ -106,7 +170,6 @@ class dynamics():
         rospy.Subscriber('next_robot', String, self.run_dynamics)
 
 
-        print 'spin '+str(number_of_naos)
         rospy.spin()
 
     def parse_behavior(self, _dict):
@@ -125,8 +188,6 @@ class dynamics():
         elif step== 'start':
             print step
             self.publisher_get_next.publish(str(0))
-            # for nao in range(self.number_of_naos):
-            #     self.publisher[nao].publish(self.parse_behavior({'action':'agree'}))
 
         elif step == 'stop':
             for nao in range(self.number_of_naos):
@@ -154,15 +215,20 @@ class dynamics():
 
         #secondary_robots look at main robot
         for robot in secondary_robots:
+            time.sleep(1.1)
             self.publisher[robot].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[robot][main_robot]]}))
+
 
         time.sleep(8)
 
         #secondary_robots look at main behaviour
         if main_robot=='h':
-            main_robot=4
+            place_in_matrix=4
+        else:
+            place_in_matrix=main_robot
+
         for robot in secondary_robots:
-            relationship=self.matrix[robot,main_robot]
+            relationship=self.matrix[robot,place_in_matrix]
             direction_for_behavior=self.transformation[robot][main_robot]
             chosen_behaviour=self.choose_behaviour(relationship)
 
@@ -190,6 +256,38 @@ class dynamics():
             print self.matrix
 
 
+    def run_dynamics_for_AMT(self, data):
+        robots = [0, 1]
+
+
+        for i in range(15):
+
+            # # secondary_robots look at main robot
+            # self.publisher[0].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[0][1]]}))
+            # time.sleep(1.5)
+            #
+            # self.publisher[1].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[1][0]]}))
+
+            time.sleep(3)
+
+
+            direction_for_behavior = self.transformation[1][0]
+
+            behavior = self.behaviors[i][direction_for_behavior][0]
+            # self.publisher[1].publish(self.parse_behavior(behavior))
+            self.publisher[1].publish(self.parse_behavior({'action': 'look_up'}))
+
+
+            print i
+
+            time.sleep(6)
+
+            self.publisher[0].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[0][2]]}))
+            time.sleep(1.5)
+            self.publisher[1].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[1]['h']]}))
+
+            time.sleep(8)
+
 
     def test(self,aa):
         print 'here'
@@ -210,17 +308,19 @@ class dynamics():
         draw = np.random.choice(list_of_candidates, 1, p=probability_distribution)
         return draw[0]
 
-    def bin_matrix(self):
+    def bin_matrix(self,_matrix):
         number_of_bins = 9
         bins = [i * (1.0 / number_of_bins) for i in xrange(number_of_bins + 1)]
         labels = [(bins[i] + bins[i + 1]) / 2.0 for i in xrange(number_of_bins)]
         labels = list(np.around(np.array(labels), 3))
+        matrix=_matrix
 
-        for i in range(self.matrix.shape[0]):
-            for j in range(self.matrix.shape[1]):
+        for i in range(_matrix.shape[0]):
+            for j in range(_matrix.shape[1]):
                 for _bin in range(len(bins) - 1):
-                    if self.matrix[i, j] >= bins[_bin] and self.matrix[i, j] < bins[_bin + 1]:
-                        self.matrix[i, j] = labels[_bin]
+                    if matrix[i, j] >= bins[_bin] and matrix[i, j] < bins[_bin + 1]:
+                       matrix[i, j] = labels[_bin]
+        return matrix
 
 if len(sys.argv) > 1:
     start=dynamics(int(sys.argv[1]))

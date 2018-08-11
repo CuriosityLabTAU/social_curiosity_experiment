@@ -15,7 +15,6 @@ class NaoNode():
         self.port = 9559
         self.robot_ip=_robot_ip
         self.node_name=_node_name
-        print 'nao_ros'+_robot_ip
 
         try:
             #motionProxy
@@ -77,15 +76,21 @@ class NaoNode():
         # wake_up
         self.wake_up()
 
-        #Sitdown
-        self.postureProxy.goToPosture("Sit", 1.0)
+        if self.node_name!='3':
+
+            #Sitdown
+            self.postureProxy.goToPosture("Sit", 1.0)
+            self.leds.off("ChestLeds")
+
+        else:
+            self.postureProxy.goToPosture("Crouch", 1.0)
+
 
         #wake_up
         # self.rest()
 
         robot_name=self.systemProxy.robotName()
 
-        self.leds.off("ChestLeds")
 
         #ros:
         rospy.init_node('nao_listener'+self.node_name)
@@ -269,6 +274,25 @@ class NaoNode():
         self.back_to_live()
 
 
+    def look_down(self):
+        angles = self.motionProxy.getAngles("Body", True)
+        basepose = angles[1]
+        self.change_pose_util('HeadPitch;' + str(basepose + 0.2) + ';0.08')
+        time.sleep(3)
+        self.change_pose_util('HeadPitch;' + str(basepose) + ';0.08')
+
+        self.back_to_live()
+
+    def look_up(self):
+        angles = self.motionProxy.getAngles("Body", True)
+        basepose = angles[1]
+        self.change_pose_util('HeadPitch;' + str(basepose - 0.4) + ';0.08')
+        time.sleep(6)
+        self.change_pose_util('HeadPitch;' + str(basepose) + ';0.08')
+
+        self.back_to_live()
+
+
     def disagree(self):
         counter = 0
         angles=self.motionProxy.getAngles("Body", True)
@@ -326,13 +350,16 @@ class NaoNode():
         self.publisher_to_nao.publish(self.parse_behavior({'action':'natural_motion'}))
 
     def end_work(self):
-        # Sitdown
-        self.postureProxy.goToPosture("Sit", 1.0)
+
+        if self.node_name != '3':
+            # Sitdown
+            self.postureProxy.goToPosture("Sit", 1.0)
+
+        else:
+            self.postureProxy.goToPosture("Crouch", 1.0)
 
         # wake_up
         self.rest()
-
-
 
 strat=NaoNode(sys.argv[1],sys.argv[2])  #FOR TEST!!!!!!!!!!
 
