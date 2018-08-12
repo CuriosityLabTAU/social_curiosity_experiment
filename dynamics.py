@@ -298,7 +298,17 @@ class dynamics():
 
             while self.current_answer ==None:
                 pass
-            ##do answer
+
+            #answer time
+            if self.current_answer==correct_robot_answer:
+                self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['yesss']}))
+
+            else:
+                self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['yesss']}))
+
+
+
+                #--1??????
 
         ## end phrase
 
