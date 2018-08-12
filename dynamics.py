@@ -29,6 +29,8 @@ class dynamics():
 
         self.interval=0
 
+        self.current_answer=None
+
         self.matrix = self.bin_matrix(np.random.rand(3, 4))
 
         self.behaviors={0:{
@@ -108,15 +110,15 @@ class dynamics():
 
         self.metadata_for_experiment_steps = {
                                         0: {'matrix':self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns' :['0','1','2','h''0','1','2','h'],
-                                            'question_time':False,
+                                            'turns' :[0,1,2,'h',0,1,0,'h'],
+                                            'question_time':[0,1,2,3],
                                             'experimenter_before':None,
                                             'experimenter_after' : None},
 
                                         1: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns': ['0', '1', '2', 'h''0', '1', '2', 'h'],
-                                            'question_time': False,
-                                            'experimenter_before': [['action',time]],
+                                            'turns': [0,1,2,'h',0,1,0,'h'],
+                                            'question_time': [0,1,2,3],
+                                            'experimenter_before': [[{'action': 'run_behavior', 'parameters':['ss']},5]],
                                             'experimenter_after': None},
 
                                         2: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
@@ -130,6 +132,12 @@ class dynamics():
 
                                         5: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
                                             'turns': ['0', '1', '2', 'h''0', '1', '2', 'h']}}
+
+        self.self.questions= {
+                                0:[[{'action': 'run_behavior', 'parameters':['ss']},5]],
+                                1: [[{'action': 'run_behavior', 'parameters': ['ss']}, 5]],
+                                2: [[{'action': 'run_behavior', 'parameters': ['ss']}, 5]],
+                                3: [[{'action': 'run_behavior', 'parameters': ['ss']}, 5]]}
 
         self.discrete_behaviors=sorted(self.behaviors.keys())
 
@@ -189,71 +197,124 @@ class dynamics():
             print step
             self.publisher_get_next.publish(str(0))
 
+        elif step == 'next_step':
+            print step
+            self.run_dynamics()
+
         elif step == 'stop':
             for nao in range(self.number_of_naos):
                 self.publisher[nao].publish(self.parse_behavior({'action': 'end_work'}))
 
 
-    def run_dynamics(self,data):
-
-        print '------'
+    def run_dynamics(self):
+        #prams for step:
+        params_for_step=self.metadata_for_experiment_steps[self.experiment_step]
+        self.matrix=params_for_step['matrix']
         secondary_robots=[0,1,2]
 
-        #config robots
-        if data.data=='h':
-            main_robot = 'h'
+        ## introduction
+        introduction_prams=params_for_step['experimenter_before']
+        if introduction_prams !=None:
+            self.publisher[3].publish(self.parse_behavior(introduction_prams[0]))
+            time.sleep(introduction_prams[1])
+
+        ## main
+        for main_robot in params_for_step['turns']:
+
+            #config robots
+            if main_robot!='h':
+                secondary_robots.remove(main_robot)
+
+            #main robot - main behavior
+            if main_robot!='h':
+                self.publisher[main_robot].publish(self.parse_behavior({'action':'run_behavior','parameters':['social_curiosity/talk/1']}))
+                self.publisher[main_robot].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(1.0)]}))
+
+            #secondary_robots look at main robot
+            for robot in secondary_robots:
+                time.sleep(1.1)
+                self.publisher[robot].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[robot][main_robot]]}))
+
+            time.sleep(8)
+
+            #secondary_robots look at main behaviour
+            if main_robot=='h':
+                place_in_matrix=4
+            else:
+                place_in_matrix=main_robot
+
+            for robot in secondary_robots:
+                relationship=self.matrix[robot,place_in_matrix]
+                direction_for_behavior=self.transformation[robot][main_robot]
+                chosen_behaviour=self.choose_behaviour(relationship)
+
+                behavior=random.choice(self.behaviors[chosen_behaviour][direction_for_behavior])
+
+                self.publisher[robot].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(relationship)]}))
+                self.publisher[robot].publish(self.parse_behavior(behavior))
+
+                time.sleep(1)
+
+            time.sleep(5)
+
+            #change_current_relationship
+            for robot in secondary_robots:
+                self.publisher[robot].publish(self.parse_behavior({'action': 'change_current_relationship', 'parameters': [str(-1.0)]}))
+            time.sleep(5)
+
+        #question asking
+        q_order=params_for_step['question_time']
+        if params_for_step['question_time'] !=None:
+            self.question_time(self,q_order)
+
+
+        ## end phrase
+        end_phrase = params_for_step['experimenter_after']
+        if end_phrase != None:
+            self.publisher[3].publish(self.parse_behavior(end_phrase[0]))
+            time.sleep(end_phrase[1])
+
+        self.experiment_step =+1
+
+
+    def question_time(self,order):
+
+        ## introduction
+        if self.experiment_step==0:
+            self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters':['ss']}))
+            time.sleep(1)
         else:
-            print data.data
-            main_robot=int(data.data)
-            secondary_robots.remove(main_robot)
-
-        #main robot - main behavior
-        if main_robot!='h':
-            self.publisher[main_robot].publish(self.parse_behavior({'action':'run_behavior','parameters':['social_curiosity/talk/1']}))
-            self.publisher[main_robot].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(1.0)]}))
-
-
-        #secondary_robots look at main robot
-        for robot in secondary_robots:
-            time.sleep(1.1)
-            self.publisher[robot].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[robot][main_robot]]}))
-
-
-        time.sleep(8)
-
-        #secondary_robots look at main behaviour
-        if main_robot=='h':
-            place_in_matrix=4
-        else:
-            place_in_matrix=main_robot
-
-        for robot in secondary_robots:
-            relationship=self.matrix[robot,place_in_matrix]
-            direction_for_behavior=self.transformation[robot][main_robot]
-            chosen_behaviour=self.choose_behaviour(relationship)
-
-            behavior=random.choice(self.behaviors[chosen_behaviour][direction_for_behavior])
-
-            self.publisher[robot].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(relationship)]}))
-            self.publisher[robot].publish(self.parse_behavior(behavior))
-
+            self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['ss']}))
             time.sleep(1)
 
-        time.sleep(5)
+        for q in order:
+            self.current_answer == None
 
+            question=self.self.questions[q]
+            correct_robot_answer=self.correct_robot_answer(self.matrix,q)
 
-        for robot in secondary_robots:
-            self.publisher[robot].publish(self.parse_behavior({'action': 'change_current_relationship', 'parameters': [str(-1.0)]}))
+            self.publisher[3].publish(self.parse_behavior(question[0]))
+            time.sleep(question[1])
 
-        time.sleep(5)
+            while self.current_answer ==None:
+                pass
+            ##do answer
 
-        self.interval+=1
+        ## end phrase
 
-        if self.interval<5:
-            self.publisher_get_next.publish(str(self.interval))
+    def correct_robot_answer(self,_matrix,n_question):
+            if n_question==0:
+                return np.argmax((_matrix.sum(axis=0))[0:3])
 
-        if self.interval==5:
-            print self.matrix
+            elif n_question==1:
+                return np.argmin((_matrix.sum(axis=0))[0:3])
+
+            elif n_question == 2:
+                return np.argmax(_matrix[:, 3])
+
+            elif n_question == 3:
+                return np.argmin(_matrix[:, 3])
+
 
 
     def run_dynamics_for_AMT(self, data):
@@ -320,6 +381,10 @@ class dynamics():
                 for _bin in range(len(bins) - 1):
                     if matrix[i, j] >= bins[_bin] and matrix[i, j] < bins[_bin + 1]:
                        matrix[i, j] = labels[_bin]
+        matrix[0,0]=0
+        matrix[1,1]=0
+        matrix[2,2]=0
+
         return matrix
 
 if len(sys.argv) > 1:
