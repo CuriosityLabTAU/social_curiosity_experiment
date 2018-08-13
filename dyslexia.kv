@@ -1,0 +1,86 @@
+<strat_screen>:
+    Widget:
+        Label:
+            pos: root.width*0.4 , root.height*0.9
+            size: root.width*0.2 , root.height*0.08
+            text:'welcome'
+            font_size:30
+            color:0,0,0,1
+
+<wait_screen>:
+    Widget:
+        Label:
+            pos: root.width*0.4 , root.height*0.9
+            size: root.width*0.2 , root.height*0.08
+            text:'Wait'
+            font_size:30
+            color:0,0,0,1
+
+
+<q_1>:
+# Naos ip and location and subject id configuration
+    Widget:
+        Label:
+            pos: root.width*0.4 , root.height*0.9
+            size: root.width*0.2 , root.height*0.08
+            text:'q 1'
+            font_size:30
+            color:0,0,0,1
+
+    Widget:
+        Image:
+            pos: root.width*0.4 , root.height*0.62
+            size: root.width*0.2 , root.height*0.3
+            source: 'nao_site_down.jpg'
+        ToggleButton:
+            group:0
+            pos: root.width*0.47 , root.height*0.53
+            text:'2'
+            size: 50, 40
+            on_release: app.update_robot_name('center','Where')
+
+    Widget:
+        Image:
+            canvas.before:
+                PushMatrix
+                Rotate:
+                    angle: 270
+                    origin: self.center
+            canvas.after:
+                PopMatrix
+
+            pos: root.width*0.79 , root.height*0.38
+            size: root.width*0.3 , root.height*0.2
+            size: 150, 150
+            source: 'nao_site_down.jpg'
+
+        ToggleButton:
+            group:0
+            pos: root.width*0.92 , root.height*0.28
+            text:'3'
+            size: 50, 40
+            on_release: app.update_robot_name('right','Which')
+
+    Widget:
+
+        Image:
+            canvas.before:
+                PushMatrix
+                Rotate:
+                    angle: 90
+                    origin: self.center
+            canvas.after:
+                PopMatrix
+
+            pos: root.width*0.05 , root.height*0.38
+            size: root.width*0.3 , root.height*0.2
+            size: 150, 150
+            source: 'nao_site_down.jpg'
+
+        ToggleButton:
+            group:0
+            pos: root.width*0.05 , root.height*0.28
+            text:'1'
+            size: 50, 40
+            on_release: app.update_robot_name('left','Howie')
+
