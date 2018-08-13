@@ -128,10 +128,9 @@ class ExperimentApp(App):
 
     def run_dynamics(self):
 
-        self.publisher.publish('start')
+        self.publisher.publish('next_step')
 
         threading._sleep(5)
-
 
 
 

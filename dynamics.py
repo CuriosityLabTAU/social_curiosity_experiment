@@ -175,9 +175,9 @@ class dynamics():
         self.publisher_get_next = rospy.Publisher('get_next', String, queue_size=10)
 
         rospy.Subscriber('the_flow', String, self.flow_handler)
-        rospy.Subscriber('next_robot', String, self.run_dynamics)
+        rospy.Subscriber('tablet_game', String, self.update_current_answer)
 
-
+        # rospy.Subscriber('next_robot', String, self.run_dynamics)
         rospy.spin()
 
     def parse_behavior(self, _dict):
@@ -289,28 +289,55 @@ class dynamics():
 
         for q in order:
             self.current_answer == None
-
+            # experimenter
+            #params:
             question=self.self.questions[q]
             correct_robot_answer=self.correct_robot_answer(self.matrix,q)
 
+            # experimenter ask question:
             self.publisher[3].publish(self.parse_behavior(question[0]))
             time.sleep(question[1])
+
+            #all robot look at subject:
+            for robot in [0,1,2]:
+                time.sleep(1.1)
+                self.publisher[robot].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(1)]}))
+                self.publisher[robot].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[robot]['h']]}))
 
             while self.current_answer ==None:
                 pass
 
+
+            for robot in [0,1,2]:
+                self.publisher[robot].publish(self.parse_behavior({'action': 'change_current_relationship', 'parameters': [str(-1)]}))
+
+
             #answer time
             if self.current_answer==correct_robot_answer:
                 self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['yesss']}))
+                time.sleep(3)
+                self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['its ok...']}))
+                time.sleep(3)
+
 
             else:
-                self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['yesss']}))
+                self.publisher[self.current_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['no_no']}))
+                self.publisher[self.current_answer].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(1)]}))
+                time.sleep(1)
+                self.publisher[self.current_answer].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[robot][correct_robot_answer]]}))
+                time.sleep(1)
+                self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': ['yesss-it is me']}))
+                self.publisher[self.current_answer].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(-1)]}))
 
+                time.sleep(5)
 
+                self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['very good']}))
+                time.sleep(3)
 
                 #--1??????
 
         ## end phrase
+        self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['end phrase']}))
 
     def correct_robot_answer(self,_matrix,n_question):
             if n_question==0:
@@ -396,6 +423,10 @@ class dynamics():
         matrix[2,2]=0
 
         return matrix
+
+    def update_current_answer(self,data):
+        self.current_answer=int(data.data)
+
 
 if len(sys.argv) > 1:
     start=dynamics(int(sys.argv[1]))

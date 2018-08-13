@@ -30,8 +30,10 @@ import numpy as np
 
 a= np.random.rand(3, 4)
 print a
-a[1,1]= 0
-print a
+
+print (a.sum(axis=0))[0:3]
+
+print np.argmax((a.sum(axis=0))[0:3])
 
 
 
