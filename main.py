@@ -42,7 +42,8 @@ def start_working(subject_id, nao_info):
 
         os.system('python pupel_ros.py' + ' ' +"'"+str_to_pass+"'")
 
-
+    def worker6():
+        os.system('python twisted_server_ros.py')
 
 
     # def worker1():
@@ -97,7 +98,11 @@ def start_working(subject_id, nao_info):
     # threading._sleep(0.2)
 
 
-    # t3 = threading.Thread(target=worker3)
+    t6 = threading.Thread(target=worker5)
+    t6.start()
+    threading._sleep(0.2)
+
+# t3 = threading.Thread(target=worker3)
     # t3.start()
     # threading._sleep(0.2)
     #

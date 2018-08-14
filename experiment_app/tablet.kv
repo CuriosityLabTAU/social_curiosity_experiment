@@ -1,0 +1,337 @@
+<Start>:
+    Widget:
+        Label:
+            pos: root.width*0.4 , root.height*0.9
+            size: root.width*0.2 , root.height*0.08
+            text:'welcome'
+            font_size:30
+            color:0,0,0,1
+    Widget:
+        ToggleButton:
+            pos: root.width*0.47 , root.height*0.53
+            text:'י/לחתה'
+            font_name: 'fonts/the_font.ttf'
+            size: 60, 40
+            on_release: app.start()
+
+
+<Wait>:
+    Widget:
+        Label:
+            pos: root.width*0.4 , root.height*0.9
+            size: root.width*0.2 , root.height*0.08
+            text:'Wait'
+            font_size:30
+            color:0,0,0,1
+    Widget:
+        ToggleButton:
+            pos: root.width*0.47 , root.height*0.53
+            text:'י/לחתה'
+            font_name: 'fonts/the_font.ttf'
+            size: 60, 40
+            on_release: app.begin_answering()
+
+
+<Q_1>:
+# Naos ip and location and subject id configuration
+    Widget:
+        Label:
+            pos: root.width*0.4 , root.height*0.9
+            size: root.width*0.2 , root.height*0.08
+            text:'q 1'
+            font_size:30
+            color:0,0,0,1
+
+    Widget:
+        Image:
+            pos: root.width*0.4 , root.height*0.62
+            size: root.width*0.2 , root.height*0.3
+            source: 'nao_site_down.jpg'
+        ToggleButton:
+            group:0
+            pos: root.width*0.47 , root.height*0.53
+            text:'2'
+            size: 50, 40
+            on_release: app.next_question('1')
+
+    Widget:
+        Image:
+            canvas.before:
+                PushMatrix
+                Rotate:
+                    angle: 270
+                    origin: self.center
+            canvas.after:
+                PopMatrix
+
+            pos: root.width*0.79 , root.height*0.38
+            size: root.width*0.3 , root.height*0.2
+            size: 150, 150
+            source: 'nao_site_down.jpg'
+
+        ToggleButton:
+            group:0
+            pos: root.width*0.92 , root.height*0.28
+            text:'3'
+            size: 50, 40
+            on_release: app.next_question('2')
+
+    Widget:
+
+        Image:
+            canvas.before:
+                PushMatrix
+                Rotate:
+                    angle: 90
+                    origin: self.center
+            canvas.after:
+                PopMatrix
+
+            pos: root.width*0.05 , root.height*0.38
+            size: root.width*0.3 , root.height*0.2
+            size: 150, 150
+            source: 'nao_site_down.jpg'
+
+        ToggleButton:
+            group:0
+            pos: root.width*0.05 , root.height*0.28
+            text:'1'
+            size: 50, 40
+            on_release: app.next_question('0')
+
+    Widget:
+        ToggleButton:
+            group:0
+            pos: root.width*0.45 , root.height*0.25
+            text:'ת/עדוי אל'
+            font_name: 'fonts/the_font.ttf'
+            size: 70, 50
+            on_release: app.next_question('-1')
+
+<Q_2>:
+# Naos ip and location and subject id configuration
+    Widget:
+        Label:
+            pos: root.width*0.4 , root.height*0.9
+            size: root.width*0.2 , root.height*0.08
+            text:'q 1'
+            font_size:30
+            color:0,0,0,1
+
+    Widget:
+        Image:
+            pos: root.width*0.4 , root.height*0.62
+            size: root.width*0.2 , root.height*0.3
+            source: 'nao_site_down.jpg'
+        ToggleButton:
+            group:0
+            pos: root.width*0.47 , root.height*0.53
+            text:'2'
+            size: 50, 40
+            on_release: app.next_question('1')
+
+    Widget:
+        Image:
+            canvas.before:
+                PushMatrix
+                Rotate:
+                    angle: 270
+                    origin: self.center
+            canvas.after:
+                PopMatrix
+
+            pos: root.width*0.79 , root.height*0.38
+            size: root.width*0.3 , root.height*0.2
+            size: 150, 150
+            source: 'nao_site_down.jpg'
+
+        ToggleButton:
+            group:0
+            pos: root.width*0.92 , root.height*0.28
+            text:'3'
+            size: 50, 40
+            on_release: app.next_question('2')
+
+    Widget:
+
+        Image:
+            canvas.before:
+                PushMatrix
+                Rotate:
+                    angle: 90
+                    origin: self.center
+            canvas.after:
+                PopMatrix
+
+            pos: root.width*0.05 , root.height*0.38
+            size: root.width*0.3 , root.height*0.2
+            size: 150, 150
+            source: 'nao_site_down.jpg'
+
+        ToggleButton:
+            group:0
+            pos: root.width*0.05 , root.height*0.28
+            text:'1'
+            size: 50, 40
+            on_release: app.next_question('0')
+
+    Widget:
+        ToggleButton:
+            group:0
+            pos: root.width*0.5 , root.height*0.25
+            text:'ת/עדוי אל'
+            font_name: 'fonts/the_font.ttf'
+            size: 70, 50
+            on_release: app.next_question('-1')
+
+<Q_3>:
+# Naos ip and location and subject id configuration
+    Widget:
+        Label:
+            pos: root.width*0.4 , root.height*0.9
+            size: root.width*0.2 , root.height*0.08
+            text:'q 1'
+            font_size:30
+            color:0,0,0,1
+
+    Widget:
+        Image:
+            pos: root.width*0.4 , root.height*0.62
+            size: root.width*0.2 , root.height*0.3
+            source: 'nao_site_down.jpg'
+        ToggleButton:
+            group:0
+            pos: root.width*0.47 , root.height*0.53
+            text:'2'
+            size: 50, 40
+            on_release: app.next_question('1')
+
+    Widget:
+        Image:
+            canvas.before:
+                PushMatrix
+                Rotate:
+                    angle: 270
+                    origin: self.center
+            canvas.after:
+                PopMatrix
+
+            pos: root.width*0.79 , root.height*0.38
+            size: root.width*0.3 , root.height*0.2
+            size: 150, 150
+            source: 'nao_site_down.jpg'
+
+        ToggleButton:
+            group:0
+            pos: root.width*0.92 , root.height*0.28
+            text:'3'
+            size: 50, 40
+            on_release: app.next_question('2')
+
+    Widget:
+
+        Image:
+            canvas.before:
+                PushMatrix
+                Rotate:
+                    angle: 90
+                    origin: self.center
+            canvas.after:
+                PopMatrix
+
+            pos: root.width*0.05 , root.height*0.38
+            size: root.width*0.3 , root.height*0.2
+            size: 150, 150
+            source: 'nao_site_down.jpg'
+
+        ToggleButton:
+            group:0
+            pos: root.width*0.05 , root.height*0.28
+            text:'1'
+            size: 50, 40
+            on_release: app.next_question('0')
+
+    Widget:
+        ToggleButton:
+            group:0
+            pos: root.width*0.5 , root.height*0.25
+            text:'ת/עדוי אל'
+            font_name: 'fonts/the_font.ttf'
+            size: 70, 50
+            on_release: app.next_question('-1')
+
+<Q_4>:
+# Naos ip and location and subject id configuration
+    Widget:
+        Label:
+            pos: root.width*0.4 , root.height*0.9
+            size: root.width*0.2 , root.height*0.08
+            text:'q 1'
+            font_size:30
+            color:0,0,0,1
+
+    Widget:
+        Image:
+            pos: root.width*0.4 , root.height*0.62
+            size: root.width*0.2 , root.height*0.3
+            source: 'nao_site_down.jpg'
+        ToggleButton:
+            group:0
+            pos: root.width*0.47 , root.height*0.53
+            text:'2'
+            size: 50, 40
+            on_release: app.next_question('1')
+
+    Widget:
+        Image:
+            canvas.before:
+                PushMatrix
+                Rotate:
+                    angle: 270
+                    origin: self.center
+            canvas.after:
+                PopMatrix
+
+            pos: root.width*0.79 , root.height*0.38
+            size: root.width*0.3 , root.height*0.2
+            size: 150, 150
+            source: 'nao_site_down.jpg'
+
+        ToggleButton:
+            group:0
+            pos: root.width*0.92 , root.height*0.28
+            text:'3'
+            size: 50, 40
+            on_release: app.next_question('2')
+
+    Widget:
+
+        Image:
+            canvas.before:
+                PushMatrix
+                Rotate:
+                    angle: 90
+                    origin: self.center
+            canvas.after:
+                PopMatrix
+
+            pos: root.width*0.05 , root.height*0.38
+            size: root.width*0.3 , root.height*0.2
+            size: 150, 150
+            source: 'nao_site_down.jpg'
+
+        ToggleButton:
+            group:0
+            pos: root.width*0.05 , root.height*0.28
+            text:'1'
+            size: 50, 40
+            on_release: app.next_question('0')
+
+    Widget:
+        ToggleButton:
+            group:0
+            pos: root.width*0.5 , root.height*0.25
+            text:'ת/עדוי אל'
+            font_name: 'fonts/the_font.ttf'
+            size: 70, 50
+            on_release: app.next_question('-1')
