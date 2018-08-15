@@ -93,6 +93,7 @@ class ExperimentApp(App):
         self.left_robot_name  ='None'
         self.center_robot_name='None'
         self.right_robot_name ='None'
+        self.gender='None'
 
         return self.sm
 
@@ -101,7 +102,11 @@ class ExperimentApp(App):
         str_for_main = ''
         for nao_inst in _nao_info:
             str_for_main = str_for_main + nao_inst[0] + '@' + nao_inst[1] +'@'+ nao_inst[2] + ' '
-        os.system('python main.py ' + subject_id + ' ' + str_for_main[:-1])
+        #add gender
+
+        str_for_main=str_for_main +self.gender
+
+        os.system('python main.py ' + subject_id + ' ' + str_for_main)
 
     def start(self,subject_id,nao_ip_center,nao_ip_left,nao_ip_right,experimenter_ip):
         self.nao_info = [(nao_ip_left, '0',self.left_robot_name), (nao_ip_center, '1',self.center_robot_name), (nao_ip_right, '2',self.right_robot_name),(experimenter_ip, '3','experimenter')]
@@ -148,6 +153,9 @@ class ExperimentApp(App):
 
         elif pos=="left":
             self.left_robot_name = name
+
+    def update_gender(self,_gender):
+         self.gender=_gender
 
     def exit_experiment(self):
         self.publisher.publish('stop')

@@ -5,7 +5,7 @@ from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
 
-from experiment_app.kivy_communication import *
+from kivy_communication import *
 
 
 class Start(BoxLayout):
@@ -85,8 +85,8 @@ class TabletApp(App):
     # ==========================================================================
 
     def try_connection(self):
-        # server_ip = self.basic_server_ip + str(self.server_ip_end)
-        server_ip = '127.0.0.1'
+        server_ip = self.basic_server_ip + str(self.server_ip_end)
+        # server_ip = '127.0.0.1'
 
         KC.start(the_parents=[self], the_ip=server_ip)  # 127.0.0.1
         KL.start(mode=[DataMode.file, DataMode.communication, DataMode.ros], pathname=self.user_data_dir,
@@ -139,7 +139,11 @@ class TabletApp(App):
     # ==========================================================================
 
     def start(self):
-        self.sm.current = "wait_screen"
+        if KC.client.status == True:
+            self.sm.current = "wait_screen"
+
+
+
 
 
     def begin_answering(self):

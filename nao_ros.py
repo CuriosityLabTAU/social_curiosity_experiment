@@ -83,7 +83,7 @@ class NaoNode():
             self.leds.off("ChestLeds")
 
         else:
-            self.postureProxy.goToPosture("Crouch", 1.0)
+            self.postureProxy.goToPosture("Stand", 1.0)
 
 
         #wake_up
@@ -358,7 +358,7 @@ class NaoNode():
         else:
             self.postureProxy.goToPosture("Crouch", 1.0)
 
-        # wake_up
+        # rest
         self.rest()
 
 strat=NaoNode(sys.argv[1],sys.argv[2])  #FOR TEST!!!!!!!!!!

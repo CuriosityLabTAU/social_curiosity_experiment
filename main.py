@@ -13,6 +13,11 @@ def intro(subject_id=0, nao_info=[('192.168.0.100','center')]):
 def start_working(subject_id, nao_info):
     print 'intro'+str(nao_info)
 
+    gender= nao_info[-1][0]
+
+    nao_info=nao_info[:-1]
+
+
     def worker1():
         os.system('roscore')
 
@@ -28,7 +33,7 @@ def start_working(subject_id, nao_info):
         os.system('python nao_subconscious.py' + ' '+ _nao[0]+' '+_nao[1])
 
     def worker3():
-        os.system('python dynamics.py'+' '+ str(len(nao_info)))
+        os.system('python dynamics.py'+' '+ str(len(nao_info))+','+gender)
 
     def worker4():
         os.system('python next_robot.py')

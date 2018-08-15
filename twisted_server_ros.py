@@ -141,5 +141,5 @@ class TwistedServerApp(App):
     #     except:
     #         print("failed to transmit_msg")
 
-if __name__ == '__main__':
-    TwistedServerApp().run()
+# if __name__ == '__main__':
+TwistedServerApp().run()
