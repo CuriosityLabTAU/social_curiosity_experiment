@@ -44,6 +44,9 @@ class NaoNode():
             # PostureProxy
             self.systemProxy = ALProxy("ALSystem", self.robot_ip, 9559)
 
+            # PostureProxy
+            self.audioplayerProxy = ALProxy("ALAudioPlayer", self.robot_ip, 9559)
+
 
             #LEDS Api:
 
@@ -69,6 +72,9 @@ class NaoNode():
             print "Error was: ",e
             sys.exit(1)
 
+        # mute
+        if self.node_name != '3':
+            self.audioplayerProxy.setMasterVolume(0)
 
         #autonomous_state
         self.set_autonomous_state_off()
@@ -354,6 +360,9 @@ class NaoNode():
         if self.node_name != '3':
             # Sitdown
             self.postureProxy.goToPosture("Sit", 1.0)
+
+            # sound back
+            self.audioplayerProxy.setMasterVolume(0.8)
 
         else:
             self.postureProxy.goToPosture("Crouch", 1.0)

@@ -22,6 +22,10 @@ class dynamics():
         #right |
         number_of_naos=int(_info.split(',')[0])
 
+        self.last_robot=None
+
+        self.nex_robot=None
+
         self.experimenter_nao=3
 
         self.gender=_info.split(',')[1]
@@ -113,7 +117,7 @@ class dynamics():
 
         self.metadata_for_experiment_steps = {
                                         0: {'matrix':self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns' :[0],
+                                            'turns' :0,
                                             'question_time':[0,1,2,3],
                                             'experimenter_before':None,
                                             'experimenter_after' :None},
@@ -187,12 +191,13 @@ class dynamics():
             self.publisher_blinking[nao] = rospy.Publisher(name_blinking, String, queue_size=10)
 
 
+
         self.publisher_get_next = rospy.Publisher('get_next', String, queue_size=10)
 
         rospy.Subscriber('the_flow', String, self.flow_handler)
         rospy.Subscriber('tablet_game', String, self.update_current_answer)
 
-        # rospy.Subscriber('next_robot', String, self.run_dynamics)
+        rospy.Subscriber('next_robot', String, self.update_next_robot)
         rospy.spin()
 
     def parse_behavior(self, _dict):
@@ -234,7 +239,23 @@ class dynamics():
             time.sleep(introduction_prams[0][1])
 
         ## main
-        for main_robot in params_for_step['turns']:
+        for turn in range(6):
+            if turn==0:
+                main_robot = params_for_step['turns']
+                self.last_robot=main_robot
+                self.publisher_get_next.publish(str(0))
+
+            else:
+                self.nex_robot= None
+                self.publisher_get_next.publish(str(self.last_robot))
+
+                while self.nex_robot==None:
+                    pass
+                main_robot = self.nex_robot
+                self.last_robot=main_robot
+
+
+
             secondary_robots = [0, 1, 2]
 
             print main_robot
@@ -335,7 +356,8 @@ class dynamics():
 
             #answer time
             if self.current_answer==correct_robot_answer:
-                self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['yesss']}))
+                parameter=random.choice(['Sit/Gestures/Me_7'])
+                self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
                 time.sleep(1)
                 parameter=random.choice(['experimenter/11','experimenter/11_'+self.gender])
                 self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
@@ -343,12 +365,13 @@ class dynamics():
 
 
             else:
-                self.publisher[self.current_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['no_no']}))
+                self.publisher[self.current_answer].publish(self.parse_behavior({'action': 'disagree'}))
                 self.publisher[self.current_answer].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(1)]}))
-                time.sleep(1)
+                time.sleep(3)
                 self.publisher[self.current_answer].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[robot][correct_robot_answer]]}))
                 time.sleep(1)
-                self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': ['yesss-it is me']}))
+                parameter=random.choice(['Sit/Gestures/Me_7'])
+                self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
                 self.publisher[self.current_answer].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(-1)]}))
 
                 time.sleep(3)
@@ -446,6 +469,9 @@ class dynamics():
 
     def update_current_answer(self,data):
         self.current_answer=int(data.data)
+
+    def update_next_robot(self,data):
+        self.nex_robot=int(data.data)
 
 
 if len(sys.argv) > 1:
