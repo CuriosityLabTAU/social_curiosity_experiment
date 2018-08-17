@@ -8,6 +8,8 @@ import json
 import random
 import pandas as pd
 from numpy.random import choice
+from random import shuffle
+
 
 
 # from nao_ros import NaoNode
@@ -120,34 +122,34 @@ class dynamics():
                                             'turns' :0,
                                             'question_time':[0,1,2,3],
                                             'experimenter_before':None,
-                                            'experimenter_after' :None},
+                                            'experimenter_after' :[[{'action': 'run_behavior', 'parameters':['experimenter/2_'+self.gender]},68]]},
 
                                         1: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns': [0,1,2,'h',0,1,0,'h'],
+                                            'turns': 1,
                                             'question_time': [0,1,2,3],
-                                            'experimenter_before': [[{'action': 'run_behavior', 'parameters':['experimenter/2_'+self.gender]},68]],
+                                            'experimenter_before': None,
                                             'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/3']},5]]},
 
                                         2: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns': [0,1,2,'h',0,1,0,'h'],
+                                            'turns': 2,
                                             'question_time': [0,1,2,3],
                                             'experimenter_before': [[{'action': 'run_behavior', 'parameters':['experimenter/4']},5]],
                                             'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/3']},5]]},
 
                                         3: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns': [0,1,2,'h',0,1,0,'h'],
+                                            'turns': 'h',
                                             'question_time': [0,1,2,3],
                                             'experimenter_before': [[{'action': 'run_behavior', 'parameters':['experimenter/4.1']},5]],
                                             'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/3']},5]]},
 
                                         4: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns': [0,1,2,'h',0,1,0,'h'],
+                                            'turns': 0,
                                             'question_time': [0,1,2,3],
                                             'experimenter_before': [[{'action': 'run_behavior', 'parameters':['experimenter/4']},5]],
                                             'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/3']},5]]},
 
                                         5: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns': [0,1,2,'h',0,1,0,'h'],
+                                            'turns': 1,
                                             'question_time': [0,1,2,3],
                                             'experimenter_before': [[{'action': 'run_behavior', 'parameters':['experimenter/4.1']},5]],
                                             'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/5_'+self.gender]},10]]}}
@@ -239,7 +241,7 @@ class dynamics():
             time.sleep(introduction_prams[0][1])
 
         ## main
-        for turn in range(6):
+        for turn in range(2):
             if turn==0:
                 main_robot = params_for_step['turns']
                 self.last_robot=main_robot
@@ -251,6 +253,7 @@ class dynamics():
 
                 while self.nex_robot==None:
                     pass
+                'got next robot'
                 main_robot = self.nex_robot
                 self.last_robot=main_robot
 
@@ -271,10 +274,10 @@ class dynamics():
 
             #secondary_robots look at main robot
             for robot in secondary_robots:
-                time.sleep(1.1)
+                time.sleep(1)
                 self.publisher[robot].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[robot][main_robot]]}))
 
-            time.sleep(8)
+            time.sleep(9)
 
             #secondary_robots look at main behaviour
             if main_robot=='h':
@@ -296,9 +299,13 @@ class dynamics():
 
             time.sleep(5)
 
-            #change_current_relationship
-            for robot in secondary_robots:
+
+            for robot in [0,1,2]:
+                # change_current_relationship
                 self.publisher[robot].publish(self.parse_behavior({'action': 'change_current_relationship', 'parameters': [str(-1.0)]}))
+                #go to sit
+                self.publisher[robot].publish(self.parse_behavior({'action':'sitdown'}))
+
             time.sleep(5)
 
         #question asking
@@ -323,8 +330,8 @@ class dynamics():
             self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters':['experimenter/1_'+self.gender]}))
             time.sleep(28)
         else:
-            self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['ss']}))
-            time.sleep(1)
+            self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['experimenter/6_'+self.gender]}))
+            time.sleep(11)
         print  'question_time'
 
         for q in order:
@@ -341,11 +348,14 @@ class dynamics():
             time.sleep(question[0][1])
 
             #all robot look at subject:
-            for robot in [0,1,2]:
-                time.sleep(1.1)
+            all_robots=[0,1,2]
+            shuffle(all_robots)
+            for robot in all_robots:
+                time.sleep(0.5)
                 self.publisher[robot].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(1)]}))
                 self.publisher[robot].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[robot]['h']]}))
             print 'wating for : '+ str(q)
+
             while self.current_answer ==None:
                 pass
             print self.current_answer ==None
@@ -361,26 +371,48 @@ class dynamics():
                 time.sleep(1)
                 parameter=random.choice(['experimenter/11','experimenter/11_'+self.gender])
                 self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
-                time.sleep(7)
+                time.sleep(5)
 
 
             else:
-                self.publisher[self.current_answer].publish(self.parse_behavior({'action': 'disagree'}))
-                self.publisher[self.current_answer].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(1)]}))
-                time.sleep(3)
-                self.publisher[self.current_answer].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[robot][correct_robot_answer]]}))
-                time.sleep(1)
-                parameter=random.choice(['Sit/Gestures/Me_7'])
-                self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
-                self.publisher[self.current_answer].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(-1)]}))
+                if self.current_answer!=-1:
 
-                time.sleep(3)
+                    self.publisher[self.current_answer].publish(self.parse_behavior({'action': 'disagree'}))
+                    self.publisher[self.current_answer].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(1)]}))
+                    time.sleep(6)
+                    self.publisher[self.current_answer].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[self.current_answer][correct_robot_answer]]}))
+                    time.sleep(0.5)
+                    parameter=random.choice(['Sit/Gestures/Me_7'])
+                    self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
+                    self.publisher[self.current_answer].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(-1)]}))
+
+                    time.sleep(0.2)
 
 
-                parameter = random.choice(['experimenter/12', 'experimenter/12_' + self.gender])
+                    parameter = random.choice(['experimenter/12', 'experimenter/12_' + self.gender])
 
-                self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
-                time.sleep(7)
+                    self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
+                    time.sleep(5)
+
+                else:
+                    robot=[0,1,2]
+                    robot.remove(correct_robot_answer)
+                    for r in robot:
+                        self.publisher[r].publish(self.parse_behavior({'action': 'move_to_pose','parameters': [self.transformation[r][correct_robot_answer]]}))
+                        time.sleep(0.2)
+
+                    parameter=random.choice(['Sit/Gestures/Me_7'])
+                    self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
+
+                    time.sleep(0.5)
+
+                    parameter = random.choice(['experimenter/12'])
+                    self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
+
+                    time.sleep(5)
+
+
+
 
     def correct_robot_answer(self,_matrix,n_question):
             if n_question==0:
@@ -468,11 +500,16 @@ class dynamics():
         return matrix
 
     def update_current_answer(self,data):
-        self.current_answer=int(data.data)
+        try:
+            self.current_answer=int(data.data)
+        except:
+            all
 
     def update_next_robot(self,data):
-        self.nex_robot=int(data.data)
-
+        if data.data !='h':
+            self.nex_robot=int(data.data)
+        else:
+            self.nex_robot = data.data
 
 if len(sys.argv) > 1:
     start=dynamics((sys.argv[1]))

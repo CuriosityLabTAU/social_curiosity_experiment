@@ -15,7 +15,7 @@
             size: root.width*0.2 , root.height*0.065
             #padding_x: self.width/3
             #padding_y: ( self.height - self.line_height ) / 2
-            text:"192.168.0.100"
+            text:"192.168.0.103"
             font_size:20
             color:0,0,0,1
         Label:
@@ -37,7 +37,7 @@
             size: root.width*0.2 , root.height*0.065
             #padding_x: self.width/3
             #padding_y: ( self.height - self.line_height ) / 2
-            text:"192.168.0.100"
+            text:"192.168.0.105"
             font_size:20
             color:0,0,0,1
         ToggleButton:
@@ -126,7 +126,7 @@
             id:nao_ip_left
             pos: root.width*0.05 , root.height*0.35
             size: root.width*0.2 , root.height*0.065
-            text:"192.168.0.102"
+            text:"192.168.0.107"
             font_size:20
             color:0,0,0,1
 
@@ -232,7 +232,7 @@
         Button:
             pos: root.width*0 , root.height*0
             size: root.width*1 , root.height*0.1
-            text:"Start Calibration"
+            text:"Start experiment"
             color:0,0,0,1
             font_size:30
             bold: True
@@ -240,9 +240,18 @@
             on_release: app.btn_released(self, app.calibration)  # function to be called when button is pressed
 
 
-<tracking_screen>:
+<flow>:
+    next_button:next_button
     Widget:
-        size_hint_y:0.2
+        Label:
+            pos: root.width*0.4 , root.height*0.9
+            size: root.width*0.2 , root.height*0.08
+            text:'Flow screen'
+            font_size:30
+            color:0,0,0,1
+            size_hint_y:0.2
+
+    Widget:
         Button:
             pos: 0 , root.height*0.85
             size_hint_x:0.2
@@ -254,12 +263,10 @@
             on_press: app.exit_experiment()
     Widget:
         Button:
-            id:not_looking
-            group:1
+            id:next_button
             pos: root.width*0.365 , root.height*0.2
             size: 250, 155
-            text:'OK'
-            background_normal: ''
+            text:'Start step 1'
             color:0,0,0,1
             font_size:40
             on_press: app.run_dynamics()

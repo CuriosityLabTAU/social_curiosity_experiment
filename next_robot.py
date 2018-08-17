@@ -17,6 +17,7 @@ class next_robot():
         self.position = {0: 'left', 1: 'center', 2: 'right'}
         self.position_inv = {'left': 0, 'center': 1 , 'right':2 }
 
+        self.counter=0
 
         #ros:
         rospy.init_node('next_robot')
@@ -57,31 +58,39 @@ class next_robot():
 
 
     def choose_next_robot(self,data):
-        last_robot=int(data.data)
+
+        if data.data!="h":
+            last_robot=int(data.data)
+        else:
+            last_robot="h"
+
         self.update_next_robot() #finish counting the time
 
-
-        #process the data and chose the robot that had the most "look time"
         #agregat data
         next_robot_sum=[[],[],[]]
         for v in list(self.next_robot_data):
             self.next_robot_data[v] = -1 * sum(self.next_robot_data[v])
             next_robot_sum[self.position_inv[v]]=self.next_robot_data[v]
+
         if np.std(self.next_robot_data.values()) <1:
             # if there is no significant one -choose randomly
             robots = [0, 1, 2]
 
-            robot_without_last=robots.remove(last_robot)
+            if last_robot !="h":
+                robots.remove(last_robot)
 
-            robot_number = choice(robot_without_last)
-            chosen_robot = self.position[robot_number]
+
+            robot_number = choice(robots)
+
+            chosen_robot = robot_number
 
         else:
-            next_robot_sum[last_robot]=0
+            if last_robot!="h":
+                next_robot_sum[last_robot]=0
+
             chosen_robot=np.argmax(next_robot_sum)
 
         #restart next_robot_data
-        print self.next_robot_data
         self.next_robot_data = {'left': [], 'center': [], 'right': []}
 
         # print 'next_robot:-=----',next_robot
@@ -89,6 +98,9 @@ class next_robot():
         # if next_robot=='3':
         #     next_robot='h'
         # print 'mext robot```````````````````:', next_robot
+        if self.counter%3==0:
+            chosen_robot='h'
+        self.counter+=1
 
         self.publisher_next.publish(str(chosen_robot))
 

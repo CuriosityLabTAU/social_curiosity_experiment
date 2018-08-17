@@ -107,6 +107,8 @@ class NaoNode():
         rospy.Subscriber(name, String, self.parse_message)
         rospy.spin()
 
+    def sitdown(self):
+        self.postureProxy.goToPosture("Sit", 0.3)
 
     def parse_behavior(self, _dict):
         return json.dumps(_dict)

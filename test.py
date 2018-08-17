@@ -335,3 +335,36 @@
 # # strat=NaoNode('192.168.0.102','left')  #FOR TEST!!!!!!!!!!
 #
 #
+
+
+import numpy as np
+import time
+import rospy
+from std_msgs.msg import String
+import operator
+import sys
+import json
+import random
+import pandas as pd
+from numpy.random import choice
+import threading
+
+
+class dynamics():
+    def __init__(self):
+        rospy.init_node('test1')
+
+        rospy.Subscriber('tablet_game', String, self.update_current_answer)
+        rospy.Subscriber('test', String, self.tester)
+
+        rospy.spin()
+
+
+    def update_current_answer(self,data):
+        print 'gogogogog'
+
+    def tester(self,data):
+        print 'test 2 '
+        threading._sleep(500)
+
+a=dynamics()

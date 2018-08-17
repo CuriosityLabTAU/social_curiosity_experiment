@@ -85,8 +85,8 @@ class TabletApp(App):
     # ==========================================================================
 
     def try_connection(self):
-        server_ip = self.basic_server_ip + str(self.server_ip_end)
-        # server_ip = '127.0.0.1'
+        # server_ip = self.basic_server_ip + str(self.server_ip_end)
+        server_ip = '127.0.0.1'
 
         KC.start(the_parents=[self], the_ip=server_ip)  # 127.0.0.1
         KL.start(mode=[DataMode.file, DataMode.communication, DataMode.ros], pathname=self.user_data_dir,
