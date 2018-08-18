@@ -30,7 +30,9 @@ class Config(BoxLayout):
 class Calibration_screen(BoxLayout):
     pass
 
-class Tracking_screen(BoxLayout):
+class Flow(BoxLayout):
+    next_button=ObjectProperty()
+
     pass
 
 class Stop_screen(BoxLayout):
@@ -49,7 +51,7 @@ class ExperimentApp(App):
 
         self.config = Config()
         self.calibration_screen= Calibration_screen()
-        self.tracking_screen=Tracking_screen()
+        self.flow=Flow()
         self.stop_screen=Stop_screen()
 
 
@@ -67,8 +69,8 @@ class ExperimentApp(App):
         Window.clearcolor = (1, 1, 1, 1)
         self.sm.add_widget(screen)
 
-        screen = Screen(name='tracking_screen')
-        screen.add_widget(self.tracking_screen)
+        screen = Screen(name='flow')
+        screen.add_widget(self.flow)
         Window.clearcolor = (1, 1, 1, 1)
         self.sm.add_widget(screen)
 
@@ -77,6 +79,9 @@ class ExperimentApp(App):
         screen.add_widget(self.stop_screen)
         Window.clearcolor = (1, 1, 1, 1)
         self.sm.add_widget(screen)
+
+        self.next_step=1
+        self.number_of_steps=6
 
         ###ros
         #roscore
@@ -93,6 +98,7 @@ class ExperimentApp(App):
         self.left_robot_name  ='None'
         self.center_robot_name='None'
         self.right_robot_name ='None'
+        self.gender='None'
 
         return self.sm
 
@@ -101,9 +107,16 @@ class ExperimentApp(App):
         str_for_main = ''
         for nao_inst in _nao_info:
             str_for_main = str_for_main + nao_inst[0] + '@' + nao_inst[1] +'@'+ nao_inst[2] + ' '
-        os.system('python main.py ' + subject_id + ' ' + str_for_main[:-1])
+        #add gender
+
+        str_for_main=str_for_main +self.gender
+
+        os.system('python main.py ' + subject_id + ' ' + str_for_main)
 
     def start(self,subject_id,nao_ip_center,nao_ip_left,nao_ip_right,experimenter_ip):
+        if self.gender=='None':
+            return
+
         self.nao_info = [(nao_ip_left, '0',self.left_robot_name), (nao_ip_center, '1',self.center_robot_name), (nao_ip_right, '2',self.right_robot_name),(experimenter_ip, '3','experimenter')]
         t1 = threading.Thread(target=self.run_main, args=(subject_id, self.nao_info))
         t1.start()
@@ -118,19 +131,29 @@ class ExperimentApp(App):
 
     def calibration(self):
 
-        self.sm.current = "tracking_screen"
-
-        print 'publish alive'
-        self.publisher.publish('alive')
-
-        threading._sleep(5)
+        self.sm.current = "flow"
 
 
     def run_dynamics(self):
+        if self.next_step>self.number_of_steps:
+            self.exit_experiment()
+            return
 
-        self.publisher.publish('next_step')
+        self.next_step+=1
 
-        threading._sleep(5)
+        # if self.next_step <self.number_of_steps:
+        #     self.flow.ids['next_button'].text = 'Start Step '+str(self.step)
+        # else:
+        #     self.flow.ids['next_button'].text = 'End the Experiment'
+
+
+        if self.next_step -1 ==1:
+            self.publisher.publish('alive')
+            threading._sleep(1)
+            self.publisher.publish('next_step')
+
+        else:
+            self.publisher.publish('next_step')
 
 
 
@@ -148,6 +171,9 @@ class ExperimentApp(App):
 
         elif pos=="left":
             self.left_robot_name = name
+
+    def update_gender(self,_gender):
+         self.gender=_gender
 
     def exit_experiment(self):
         self.publisher.publish('stop')

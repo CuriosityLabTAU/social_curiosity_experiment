@@ -8,6 +8,8 @@ import json
 import random
 import pandas as pd
 from numpy.random import choice
+from random import shuffle
+
 
 
 # from nao_ros import NaoNode
@@ -15,13 +17,20 @@ from numpy.random import choice
 
 
 class dynamics():
-    def __init__(self,number_of_naos):
+    def __init__(self,_info):
         #      |left | center | right |human
         #left  |
         #center|
         #right |
+        number_of_naos=int(_info.split(',')[0])
+
+        self.last_robot=None
+
+        self.nex_robot=None
 
         self.experimenter_nao=3
+
+        self.gender=_info.split(',')[1]
 
         self.number_of_naos=number_of_naos
 
@@ -71,73 +80,85 @@ class dynamics():
                         7:{
                         "left"  :[{'action': 'run_behavior', 'parameters': ['social_curiosity/right_forward']}],
                         "center":[{'action': 'run_behavior', 'parameters': ['social_curiosity/center_forward']}],
-                        "right" :[{'action': 'run_behavior', 'parameters': ['social_curiosity/left_forward']}]},
+                        "right" :[{'action': 'run_behavior', 'parameters': ['social_curiosity/left_forward']}]}}
 
-                        8:{
-                        "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_left']}],
-                        "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_center']}],
-                        "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_center']}]},
+                        # 8:{
+                        # "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_left']}],
+                        # "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_center']}],
+                        # "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_center']}]},
 
-                        9:{
-                        "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_hand_behind_head_left']}],
-                        "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_behind_head_center']}],
-                        "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_behind_head_right']}]},
-
-                        10:{
-                        "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_lean_back']}],
-                        "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/center_hand_lean_forward']}],
-                        "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_lean_back']}]},
-
-                        11:{
-                        "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_random']}],
-                        "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_hand_random']}],
-                        "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_hand_random']}]},
-
-                        12:{
-                        "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_hand_random']}],
-                        "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_random']}],
-                        "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_random']}]},
-
-                        13:{
-                        "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_2']}],
-                        "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_2']}],
-                        "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_2']}]},
-
-                        14:{
-                        "left":   [{'action':'look_down'}],
-                        "center": [{'action':'look_down'}],
-                        "right":  [{'action':'look_down'}]}}
+                        # 9:{
+                        # "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_hand_behind_head_left']}],
+                        # "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_behind_head_center']}],
+                        # "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_behind_head_right']}]},
+                        #
+                        # 10:{
+                        # "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_lean_back']}],
+                        # "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/center_hand_lean_forward']}],
+                        # "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_lean_back']}]},
+                        #
+                        # 11:{
+                        # "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_random']}],
+                        # "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_hand_random']}],
+                        # "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_hand_random']}]},
+                        #
+                        # 12:{
+                        # "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_hand_random']}],
+                        # "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_random']}],
+                        # "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_random']}]},
+                        #
+                        # 13:{
+                        # "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_2']}],
+                        # "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_2']}],
+                        # "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_2']}]},
+                        #
+                        # 14:{
+                        # "left":   [{'action':'look_down'}],
+                        # "center": [{'action':'look_down'}],
+                        # "right":  [{'action':'look_down'}]}}
 
         self.metadata_for_experiment_steps = {
                                         0: {'matrix':self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns' :[0,1,2,'h',0,1,0,'h'],
+                                            'turns' :0,
                                             'question_time':[0,1,2,3],
                                             'experimenter_before':None,
-                                            'experimenter_after' : None},
+                                            'experimenter_after' :[[{'action': 'run_behavior', 'parameters':['experimenter/2_'+self.gender]},68]]},
 
                                         1: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns': [0,1,2,'h',0,1,0,'h'],
+                                            'turns': 1,
                                             'question_time': [0,1,2,3],
-                                            'experimenter_before': [[{'action': 'run_behavior', 'parameters':['ss']},5]],
-                                            'experimenter_after': None},
+                                            'experimenter_before': None,
+                                            'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/3']},5]]},
 
                                         2: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns': ['0', '1', '2', 'h''0', '1', '2', 'h']},
+                                            'turns': 2,
+                                            'question_time': [0,1,2,3],
+                                            'experimenter_before': [[{'action': 'run_behavior', 'parameters':['experimenter/4']},5]],
+                                            'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/3']},5]]},
 
                                         3: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns': ['0', '1', '2', 'h''0', '1', '2', 'h']},
+                                            'turns': 'h',
+                                            'question_time': [0,1,2,3],
+                                            'experimenter_before': [[{'action': 'run_behavior', 'parameters':['experimenter/4.1']},5]],
+                                            'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/3']},5]]},
 
                                         4: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns': ['0', '1', '2', 'h''0', '1', '2', 'h']},
+                                            'turns': 0,
+                                            'question_time': [0,1,2,3],
+                                            'experimenter_before': [[{'action': 'run_behavior', 'parameters':['experimenter/4']},5]],
+                                            'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/3']},5]]},
 
                                         5: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns': ['0', '1', '2', 'h''0', '1', '2', 'h']}}
+                                            'turns': 1,
+                                            'question_time': [0,1,2,3],
+                                            'experimenter_before': [[{'action': 'run_behavior', 'parameters':['experimenter/4.1']},5]],
+                                            'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/5_'+self.gender]},10]]}}
 
-        self.self.questions= {
-                                0:[[{'action': 'run_behavior', 'parameters':['ss']},5]],
-                                1: [[{'action': 'run_behavior', 'parameters': ['ss']}, 5]],
-                                2: [[{'action': 'run_behavior', 'parameters': ['ss']}, 5]],
-                                3: [[{'action': 'run_behavior', 'parameters': ['ss']}, 5]]}
+        self.questions= {
+                                0: [[{'action': 'run_behavior', 'parameters': ['experimenter/7']},7]],
+                                1: [[{'action': 'run_behavior', 'parameters': ['experimenter/8']}, 6]],
+                                2: [[{'action': 'run_behavior', 'parameters': ['experimenter/9_'+self.gender]}, 5]],
+                                3: [[{'action': 'run_behavior', 'parameters': ['experimenter/10_'+self.gender]}, 5]]}
 
         self.discrete_behaviors=sorted(self.behaviors.keys())
 
@@ -172,12 +193,13 @@ class dynamics():
             self.publisher_blinking[nao] = rospy.Publisher(name_blinking, String, queue_size=10)
 
 
+
         self.publisher_get_next = rospy.Publisher('get_next', String, queue_size=10)
 
         rospy.Subscriber('the_flow', String, self.flow_handler)
         rospy.Subscriber('tablet_game', String, self.update_current_answer)
 
-        # rospy.Subscriber('next_robot', String, self.run_dynamics)
+        rospy.Subscriber('next_robot', String, self.update_next_robot)
         rospy.spin()
 
     def parse_behavior(self, _dict):
@@ -215,11 +237,31 @@ class dynamics():
         ## introduction
         introduction_prams=params_for_step['experimenter_before']
         if introduction_prams !=None:
-            self.publisher[3].publish(self.parse_behavior(introduction_prams[0]))
-            time.sleep(introduction_prams[1])
+            self.publisher[3].publish(self.parse_behavior(introduction_prams[0][0]))
+            time.sleep(introduction_prams[0][1])
 
         ## main
-        for main_robot in params_for_step['turns']:
+        for turn in range(2):
+            if turn==0:
+                main_robot = params_for_step['turns']
+                self.last_robot=main_robot
+                self.publisher_get_next.publish(str(0))
+
+            else:
+                self.nex_robot= None
+                self.publisher_get_next.publish(str(self.last_robot))
+
+                while self.nex_robot==None:
+                    pass
+                'got next robot'
+                main_robot = self.nex_robot
+                self.last_robot=main_robot
+
+
+
+            secondary_robots = [0, 1, 2]
+
+            print main_robot
 
             #config robots
             if main_robot!='h':
@@ -232,14 +274,14 @@ class dynamics():
 
             #secondary_robots look at main robot
             for robot in secondary_robots:
-                time.sleep(1.1)
+                time.sleep(1)
                 self.publisher[robot].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[robot][main_robot]]}))
 
-            time.sleep(8)
+            time.sleep(9)
 
             #secondary_robots look at main behaviour
             if main_robot=='h':
-                place_in_matrix=4
+                place_in_matrix=3
             else:
                 place_in_matrix=main_robot
 
@@ -257,22 +299,26 @@ class dynamics():
 
             time.sleep(5)
 
-            #change_current_relationship
-            for robot in secondary_robots:
+
+            for robot in [0,1,2]:
+                # change_current_relationship
                 self.publisher[robot].publish(self.parse_behavior({'action': 'change_current_relationship', 'parameters': [str(-1.0)]}))
+                #go to sit
+                self.publisher[robot].publish(self.parse_behavior({'action':'sitdown'}))
+
             time.sleep(5)
 
         #question asking
         q_order=params_for_step['question_time']
         if params_for_step['question_time'] !=None:
-            self.question_time(self,q_order)
+            self.question_time(q_order)
 
 
         ## end phrase
         end_phrase = params_for_step['experimenter_after']
         if end_phrase != None:
-            self.publisher[3].publish(self.parse_behavior(end_phrase[0]))
-            time.sleep(end_phrase[1])
+            self.publisher[3].publish(self.parse_behavior(end_phrase[0][0]))
+            time.sleep(end_phrase[0][1])
 
         self.experiment_step =+1
 
@@ -281,32 +327,38 @@ class dynamics():
 
         ## introduction
         if self.experiment_step==0:
-            self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters':['ss']}))
-            time.sleep(1)
+            self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters':['experimenter/1_'+self.gender]}))
+            time.sleep(28)
         else:
-            self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['ss']}))
-            time.sleep(1)
+            self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['experimenter/6_'+self.gender]}))
+            time.sleep(11)
+        print  'question_time'
 
         for q in order:
-            self.current_answer == None
+
+
+            self.current_answer = None
             # experimenter
             #params:
-            question=self.self.questions[q]
+            question=self.questions[q]
             correct_robot_answer=self.correct_robot_answer(self.matrix,q)
 
             # experimenter ask question:
-            self.publisher[3].publish(self.parse_behavior(question[0]))
-            time.sleep(question[1])
+            self.publisher[3].publish(self.parse_behavior(question[0][0]))
+            time.sleep(question[0][1])
 
             #all robot look at subject:
-            for robot in [0,1,2]:
-                time.sleep(1.1)
+            all_robots=[0,1,2]
+            shuffle(all_robots)
+            for robot in all_robots:
+                time.sleep(0.5)
                 self.publisher[robot].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(1)]}))
                 self.publisher[robot].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[robot]['h']]}))
+            print 'wating for : '+ str(q)
 
             while self.current_answer ==None:
                 pass
-
+            print self.current_answer ==None
 
             for robot in [0,1,2]:
                 self.publisher[robot].publish(self.parse_behavior({'action': 'change_current_relationship', 'parameters': [str(-1)]}))
@@ -314,30 +366,53 @@ class dynamics():
 
             #answer time
             if self.current_answer==correct_robot_answer:
-                self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['yesss']}))
-                time.sleep(3)
-                self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['its ok...']}))
-                time.sleep(3)
+                parameter=random.choice(['Sit/Gestures/Me_7'])
+                self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
+                time.sleep(1)
+                parameter=random.choice(['experimenter/11','experimenter/11_'+self.gender])
+                self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
+                time.sleep(5)
 
 
             else:
-                self.publisher[self.current_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['no_no']}))
-                self.publisher[self.current_answer].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(1)]}))
-                time.sleep(1)
-                self.publisher[self.current_answer].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[robot][correct_robot_answer]]}))
-                time.sleep(1)
-                self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': ['yesss-it is me']}))
-                self.publisher[self.current_answer].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(-1)]}))
+                if self.current_answer!=-1:
 
-                time.sleep(5)
+                    self.publisher[self.current_answer].publish(self.parse_behavior({'action': 'disagree'}))
+                    self.publisher[self.current_answer].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(1)]}))
+                    time.sleep(6)
+                    self.publisher[self.current_answer].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[self.current_answer][correct_robot_answer]]}))
+                    time.sleep(0.5)
+                    parameter=random.choice(['Sit/Gestures/Me_7'])
+                    self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
+                    self.publisher[self.current_answer].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(-1)]}))
 
-                self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['very good']}))
-                time.sleep(3)
+                    time.sleep(0.2)
 
-                #--1??????
 
-        ## end phrase
-        self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['end phrase']}))
+                    parameter = random.choice(['experimenter/12', 'experimenter/12_' + self.gender])
+
+                    self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
+                    time.sleep(5)
+
+                else:
+                    robot=[0,1,2]
+                    robot.remove(correct_robot_answer)
+                    for r in robot:
+                        self.publisher[r].publish(self.parse_behavior({'action': 'move_to_pose','parameters': [self.transformation[r][correct_robot_answer]]}))
+                        time.sleep(0.2)
+
+                    parameter=random.choice(['Sit/Gestures/Me_7'])
+                    self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
+
+                    time.sleep(0.5)
+
+                    parameter = random.choice(['experimenter/12'])
+                    self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
+
+                    time.sleep(5)
+
+
+
 
     def correct_robot_answer(self,_matrix,n_question):
             if n_question==0:
@@ -425,11 +500,19 @@ class dynamics():
         return matrix
 
     def update_current_answer(self,data):
-        self.current_answer=int(data.data)
+        try:
+            self.current_answer=int(data.data)
+        except:
+            all
 
+    def update_next_robot(self,data):
+        if data.data !='h':
+            self.nex_robot=int(data.data)
+        else:
+            self.nex_robot = data.data
 
 if len(sys.argv) > 1:
-    start=dynamics(int(sys.argv[1]))
+    start=dynamics((sys.argv[1]))
 # else:
 #     start=dynamics(1)
     # start.test()

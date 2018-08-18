@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.random import choice
 import time
 import rospy
 from std_msgs.msg import String
@@ -14,6 +15,9 @@ class next_robot():
         self.next_robot_data = {'left': [], 'center': [], 'right': []}
         self.present_direction = 0
         self.position = {0: 'left', 1: 'center', 2: 'right'}
+        self.position_inv = {'left': 0, 'center': 1 , 'right':2 }
+
+        self.counter=0
 
         #ros:
         rospy.init_node('next_robot')
@@ -54,33 +58,51 @@ class next_robot():
 
 
     def choose_next_robot(self,data):
+
+        if data.data!="h":
+            last_robot=int(data.data)
+        else:
+            last_robot="h"
+
         self.update_next_robot() #finish counting the time
 
+        #agregat data
+        next_robot_sum=[[],[],[]]
+        for v in list(self.next_robot_data):
+            self.next_robot_data[v] = -1 * sum(self.next_robot_data[v])
+            next_robot_sum[self.position_inv[v]]=self.next_robot_data[v]
 
-        # #process the data and chose the robot that had the most "look time"
-        # #agregat data
-        # for v in list(self.next_robot_data):
-        #     self.next_robot_data[v] = -1 * sum(self.next_robot_data[v])
-        # if np.std(self.next_robot_data.values()) <1:
-        #     # if there is no significant one -choose randomly
-        #     robot_number = np.random.random_integers(0, 2)
-        #     chosen_robot = self.position[robot_number]
-        #
-        # else:
-        #     chosen_robot=max(self.next_robot_data.iteritems(), key=operator.itemgetter(1))[0]
-        #
-        # #restart next_robot_data
-        # print self.next_robot_data
-        # self.next_robot_data = {'left': [], 'center': [], 'right': []}
-        #
-        # next_robot=str(self.position.keys()[self.position.values().index(chosen_robot)])
-        #
+        if np.std(self.next_robot_data.values()) <1:
+            # if there is no significant one -choose randomly
+            robots = [0, 1, 2]
+
+            if last_robot !="h":
+                robots.remove(last_robot)
+
+
+            robot_number = choice(robots)
+
+            chosen_robot = robot_number
+
+        else:
+            if last_robot!="h":
+                next_robot_sum[last_robot]=0
+
+            chosen_robot=np.argmax(next_robot_sum)
+
+        #restart next_robot_data
+        self.next_robot_data = {'left': [], 'center': [], 'right': []}
+
         # print 'next_robot:-=----',next_robot
-        next_robot=str(randint(0, 3))
-        if next_robot=='3':
-            next_robot='h'
-        print 'mext robot```````````````````:', next_robot
-        self.publisher_next.publish(next_robot)
+        # next_robot=str(randint(0, 3))
+        # if next_robot=='3':
+        #     next_robot='h'
+        # print 'mext robot```````````````````:', next_robot
+        if self.counter%3==0:
+            chosen_robot='h'
+        self.counter+=1
+
+        self.publisher_next.publish(str(chosen_robot))
 
         # return self.position.keys()[self.position.values().index(chosen_robot)]
 

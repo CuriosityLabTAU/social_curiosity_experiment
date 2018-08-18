@@ -53,6 +53,7 @@ class pupel_ros():
         # Sockets can be polled or read in different threads.
 
         # we need a serializer
+        print 'pupel is on'
 
         while True:
             topic, payload = subscriber.recv_multipart()
@@ -63,7 +64,7 @@ class pupel_ros():
                 current_status = message['gaze_on_srf'][0]['on_srf']
 
                 if current_position != self.current_position or current_status!=self.current_status:
-                    print message['name'], ":", message['gaze_on_srf'][0]['on_srf']
+                    # print message['name'], ":", message['gaze_on_srf'][0]['on_srf']
 
                     self.current_position=current_position
                     self.current_status  =current_status
