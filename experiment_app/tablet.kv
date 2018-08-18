@@ -27,10 +27,11 @@
             color:0,0,0,1
     Widget:
         ToggleButton:
-            pos: root.width*0.47 , root.height*0.53
+            pos: root.width*0.455 , root.height*0.53
             text:'י/לחתה'
             font_name: 'fonts/the_font.ttf'
-            size: 60, 40
+            size: 140, 50
+            font_size:40
             on_release: app.begin_answering()
 
 
@@ -52,9 +53,9 @@
             source: 'nao_site_down.jpg'
         ToggleButton:
             group:0
-            pos: root.width*0.47 , root.height*0.53
+            pos: root.width*0.485 , root.height*0.53
             text:'2'
-            size: 50, 40
+            size: 60, 50
             on_release: app.next_question('1')
 
     Widget:
@@ -67,16 +68,16 @@
             canvas.after:
                 PopMatrix
 
-            pos: root.width*0.79 , root.height*0.38
+            pos: root.width*0.75 , root.height*0.38
             size: root.width*0.3 , root.height*0.2
-            size: 150, 150
+            #size: 150, 150
             source: 'nao_site_down.jpg'
 
         ToggleButton:
             group:0
             pos: root.width*0.89 , root.height*0.28
             text:'3'
-            size: 50, 40
+            size: 60, 50
             on_release: app.next_question('2')
 
     Widget:
@@ -90,26 +91,35 @@
             canvas.after:
                 PopMatrix
 
-            pos: root.width*0.05 , root.height*0.38
+            pos: root.width*0.02 , root.height*0.38
             size: root.width*0.3 , root.height*0.2
-            size: 150, 150
+            #size: 150, 150
             source: 'nao_site_down.jpg'
 
         ToggleButton:
             group:0
-            pos: root.width*0.1 , root.height*0.28
+            pos: root.width*0.15 , root.height*0.28
             text:'1'
-            size: 50, 40
+            size: 60, 50
             on_release: app.next_question('0')
 
     Widget:
         ToggleButton:
             group:0
-            pos: root.width*0.45 , root.height*0.25
+            pos: root.width*0.48 , root.height*0.25
             text:'ת/עדוי אל'
             font_name: 'fonts/the_font.ttf'
-            size: 70, 50
+            size: 80, 60
             on_release: app.next_question('-1')
+
+    Widget:
+        Label:
+            pos: root.width*0.4 , root.height*0.03
+            size: root.width*1 , root.height*0.03
+            text:'הנוכנה הבושתה תא י/רחב'
+            font_name: 'fonts/the_font.ttf'
+            font_size:20
+            color:0,0,0,1
 
 <Q_2>:
 # Naos ip and location and subject id configuration
@@ -129,9 +139,9 @@
             source: 'nao_site_down.jpg'
         ToggleButton:
             group:0
-            pos: root.width*0.47 , root.height*0.53
+            pos: root.width*0.485 , root.height*0.53
             text:'2'
-            size: 50, 40
+            size: 60, 50
             on_release: app.next_question('1')
 
     Widget:
@@ -144,16 +154,16 @@
             canvas.after:
                 PopMatrix
 
-            pos: root.width*0.79 , root.height*0.38
+            pos: root.width*0.75 , root.height*0.38
             size: root.width*0.3 , root.height*0.2
-            size: 150, 150
+            #size: 150, 150
             source: 'nao_site_down.jpg'
 
         ToggleButton:
             group:0
             pos: root.width*0.89 , root.height*0.28
             text:'3'
-            size: 50, 40
+            size: 60, 50
             on_release: app.next_question('2')
 
     Widget:
@@ -167,27 +177,35 @@
             canvas.after:
                 PopMatrix
 
-            pos: root.width*0.05 , root.height*0.38
+            pos: root.width*0.02 , root.height*0.38
             size: root.width*0.3 , root.height*0.2
-            size: 150, 150
+            #size: 150, 150
             source: 'nao_site_down.jpg'
 
         ToggleButton:
             group:0
-            pos: root.width*0.1 , root.height*0.28
+            pos: root.width*0.15 , root.height*0.28
             text:'1'
-            size: 50, 40
+            size: 60, 50
             on_release: app.next_question('0')
 
     Widget:
         ToggleButton:
             group:0
-            pos: root.width*0.45 , root.height*0.25
+            pos: root.width*0.48 , root.height*0.25
             text:'ת/עדוי אל'
             font_name: 'fonts/the_font.ttf'
-            size: 70, 50
+            size: 80, 60
             on_release: app.next_question('-1')
 
+    Widget:
+        Label:
+            pos: root.width*0.4 , root.height*0.03
+            size: root.width*1 , root.height*0.03
+            text:'הנוכנה הבושתה תא י/רחב'
+            font_name: 'fonts/the_font.ttf'
+            font_size:20
+            color:0,0,0,1
 
 <Q_3>:
 # Naos ip and location and subject id configuration
@@ -207,9 +225,9 @@
             source: 'nao_site_down.jpg'
         ToggleButton:
             group:0
-            pos: root.width*0.47 , root.height*0.53
+            pos: root.width*0.485 , root.height*0.53
             text:'2'
-            size: 50, 40
+            size: 60, 50
             on_release: app.next_question('1')
 
     Widget:
@@ -222,16 +240,16 @@
             canvas.after:
                 PopMatrix
 
-            pos: root.width*0.79 , root.height*0.38
+            pos: root.width*0.75 , root.height*0.38
             size: root.width*0.3 , root.height*0.2
-            size: 150, 150
+            #size: 150, 150
             source: 'nao_site_down.jpg'
 
         ToggleButton:
             group:0
             pos: root.width*0.89 , root.height*0.28
             text:'3'
-            size: 50, 40
+            size: 60, 50
             on_release: app.next_question('2')
 
     Widget:
@@ -245,27 +263,35 @@
             canvas.after:
                 PopMatrix
 
-            pos: root.width*0.05 , root.height*0.38
+            pos: root.width*0.02 , root.height*0.38
             size: root.width*0.3 , root.height*0.2
-            size: 150, 150
+            #size: 150, 150
             source: 'nao_site_down.jpg'
 
         ToggleButton:
             group:0
-            pos: root.width*0.1 , root.height*0.28
+            pos: root.width*0.15 , root.height*0.28
             text:'1'
-            size: 50, 40
+            size: 60, 50
             on_release: app.next_question('0')
 
     Widget:
         ToggleButton:
             group:0
-            pos: root.width*0.45 , root.height*0.25
+            pos: root.width*0.48 , root.height*0.25
             text:'ת/עדוי אל'
             font_name: 'fonts/the_font.ttf'
-            size: 70, 50
+            size: 80, 60
             on_release: app.next_question('-1')
 
+    Widget:
+        Label:
+            pos: root.width*0.4 , root.height*0.03
+            size: root.width*1 , root.height*0.03
+            text:'הנוכנה הבושתה תא י/רחב'
+            font_name: 'fonts/the_font.ttf'
+            font_size:20
+            color:0,0,0,1
 
 
 <Q_4>:
@@ -286,9 +312,9 @@
             source: 'nao_site_down.jpg'
         ToggleButton:
             group:0
-            pos: root.width*0.47 , root.height*0.53
+            pos: root.width*0.485 , root.height*0.53
             text:'2'
-            size: 50, 40
+            size: 60, 50
             on_release: app.next_question('1')
 
     Widget:
@@ -301,16 +327,16 @@
             canvas.after:
                 PopMatrix
 
-            pos: root.width*0.79 , root.height*0.38
+            pos: root.width*0.75 , root.height*0.38
             size: root.width*0.3 , root.height*0.2
-            size: 150, 150
+            #size: 150, 150
             source: 'nao_site_down.jpg'
 
         ToggleButton:
             group:0
             pos: root.width*0.89 , root.height*0.28
             text:'3'
-            size: 50, 40
+            size: 60, 50
             on_release: app.next_question('2')
 
     Widget:
@@ -324,23 +350,32 @@
             canvas.after:
                 PopMatrix
 
-            pos: root.width*0.05 , root.height*0.38
+            pos: root.width*0.02 , root.height*0.38
             size: root.width*0.3 , root.height*0.2
-            size: 150, 150
+            #size: 150, 150
             source: 'nao_site_down.jpg'
 
         ToggleButton:
             group:0
-            pos: root.width*0.1 , root.height*0.28
+            pos: root.width*0.15 , root.height*0.28
             text:'1'
-            size: 50, 40
+            size: 60, 50
             on_release: app.next_question('0')
 
     Widget:
         ToggleButton:
             group:0
-            pos: root.width*0.45 , root.height*0.25
+            pos: root.width*0.48 , root.height*0.25
             text:'ת/עדוי אל'
             font_name: 'fonts/the_font.ttf'
-            size: 70, 50
+            size: 80, 60
             on_release: app.next_question('-1')
+
+    Widget:
+        Label:
+            pos: root.width*0.4 , root.height*0.03
+            size: root.width*1 , root.height*0.03
+            text:'הנוכנה הבושתה תא י/רחב'
+            font_name: 'fonts/the_font.ttf'
+            font_size:20
+            color:0,0,0,1

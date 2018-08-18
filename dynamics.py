@@ -42,7 +42,8 @@ class dynamics():
 
         self.matrix = self.bin_matrix(np.random.rand(3, 4))
 
-        self.behaviors={0:{
+        self.behaviors={
+                        0:{
                         "left"  :[{'action':'run_behavior','parameters':['social_curiosity/close_hands']}],
                         "center":[{'action':'run_behavior','parameters':['social_curiosity/close_hands']}],
                         "right" :[{'action':'run_behavior','parameters':['social_curiosity/close_hands']}]},
@@ -80,42 +81,42 @@ class dynamics():
                         7:{
                         "left"  :[{'action': 'run_behavior', 'parameters': ['social_curiosity/right_forward']}],
                         "center":[{'action': 'run_behavior', 'parameters': ['social_curiosity/center_forward']}],
-                        "right" :[{'action': 'run_behavior', 'parameters': ['social_curiosity/left_forward']}]}}
+                        "right" :[{'action': 'run_behavior', 'parameters': ['social_curiosity/left_forward']}]},
 
-                        # 8:{
-                        # "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_left']}],
-                        # "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_center']}],
-                        # "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_center']}]},
+                        8:{
+                        "left": [{'action': 'run_behavior', 'parameters': ['social_curiosity/hate_left']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/hate_center']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['social_curiosity/hate_center']}]},
 
-                        # 9:{
-                        # "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_hand_behind_head_left']}],
-                        # "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_behind_head_center']}],
-                        # "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_behind_head_right']}]},
-                        #
-                        # 10:{
-                        # "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_lean_back']}],
-                        # "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/center_hand_lean_forward']}],
-                        # "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_lean_back']}]},
-                        #
-                        # 11:{
-                        # "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_random']}],
-                        # "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_hand_random']}],
-                        # "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_hand_random']}]},
-                        #
-                        # 12:{
-                        # "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/right_hand_random']}],
-                        # "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_random']}],
-                        # "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/left_hand_random']}]},
-                        #
-                        # 13:{
-                        # "left": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_2']}],
-                        # "center": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_2']}],
-                        # "right": [{'action': 'run_behavior', 'parameters': ['elina_julia/hate_2']}]},
-                        #
-                        # 14:{
-                        # "left":   [{'action':'look_down'}],
-                        # "center": [{'action':'look_down'}],
-                        # "right":  [{'action':'look_down'}]}}
+                        9:{
+                        "left": [{'action': 'run_behavior', 'parameters': ['social_curiosity/right_hand_behind_head_left']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/left_hand_behind_head_center']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['social_curiosity/left_hand_behind_head_right']}]},
+
+                        10:{
+                        "left": [{'action': 'run_behavior', 'parameters': ['social_curiosity/left_lean_back']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/center_hand_lean_forward']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['social_curiosity/right_lean_back']}]},
+
+                        11:{
+                        "left": [{'action': 'run_behavior', 'parameters': ['social_curiosity/left_hand_random']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/right_hand_random']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['social_curiosity/right_hand_random']}]},
+
+                        12:{
+                        "left": [{'action': 'run_behavior', 'parameters': ['social_curiosity/right_hand_random']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/left_hand_random']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['social_curiosity/left_hand_random']}]},
+
+                        13:{
+                        "left": [{'action': 'run_behavior', 'parameters': ['social_curiosity/hate_2']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/hate_2']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['social_curiosity/hate_2']}]},
+
+                        14:{
+                        "left":   [{'action':'look_down'}],
+                        "center": [{'action':'look_down'}],
+                        "right":  [{'action':'look_down'}]}}
 
         self.metadata_for_experiment_steps = {
                                         0: {'matrix':self.bin_matrix(np.random.rand(3, 4)),
@@ -285,6 +286,7 @@ class dynamics():
             else:
                 place_in_matrix=main_robot
 
+            back_to_sit_bol=[0,0,0]
             for robot in secondary_robots:
                 relationship=self.matrix[robot,place_in_matrix]
                 direction_for_behavior=self.transformation[robot][main_robot]
@@ -295,6 +297,9 @@ class dynamics():
                 self.publisher[robot].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(relationship)]}))
                 self.publisher[robot].publish(self.parse_behavior(behavior))
 
+                if behavior in [{'action': 'run_behavior', 'parameters': ['social_curiosity/neutral']}]:
+                    back_to_sit_bol[robot]=1
+
                 time.sleep(1)
 
             time.sleep(5)
@@ -304,7 +309,8 @@ class dynamics():
                 # change_current_relationship
                 self.publisher[robot].publish(self.parse_behavior({'action': 'change_current_relationship', 'parameters': [str(-1.0)]}))
                 #go to sit
-                self.publisher[robot].publish(self.parse_behavior({'action':'sitdown'}))
+                if back_to_sit_bol[robot]==1:
+                    self.publisher[robot].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['social_curiosity/back_to_sit']}))
 
             time.sleep(5)
 
@@ -320,7 +326,7 @@ class dynamics():
             self.publisher[3].publish(self.parse_behavior(end_phrase[0][0]))
             time.sleep(end_phrase[0][1])
 
-        self.experiment_step =+1
+        self.experiment_step += 1
 
 
     def question_time(self,order):
@@ -368,25 +374,30 @@ class dynamics():
             if self.current_answer==correct_robot_answer:
                 parameter=random.choice(['Sit/Gestures/Me_7'])
                 self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
-                time.sleep(1)
+                time.sleep(2)
+
                 parameter=random.choice(['experimenter/11','experimenter/11_'+self.gender])
                 self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
                 time.sleep(5)
 
 
             else:
+                robot = [0, 1, 2]
+                robot.remove(correct_robot_answer)
                 if self.current_answer!=-1:
 
                     self.publisher[self.current_answer].publish(self.parse_behavior({'action': 'disagree'}))
                     self.publisher[self.current_answer].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(1)]}))
-                    time.sleep(6)
-                    self.publisher[self.current_answer].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[self.current_answer][correct_robot_answer]]}))
+                    time.sleep(7)
+                    for r in robot:
+                        self.publisher[r].publish(self.parse_behavior({'action': 'move_to_pose','parameters': [self.transformation[r][correct_robot_answer]]}))
+                        time.sleep(0.3)
                     time.sleep(0.5)
                     parameter=random.choice(['Sit/Gestures/Me_7'])
                     self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
                     self.publisher[self.current_answer].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(-1)]}))
 
-                    time.sleep(0.2)
+                    time.sleep(1)
 
 
                     parameter = random.choice(['experimenter/12', 'experimenter/12_' + self.gender])
@@ -395,16 +406,17 @@ class dynamics():
                     time.sleep(5)
 
                 else:
-                    robot=[0,1,2]
-                    robot.remove(correct_robot_answer)
+
                     for r in robot:
                         self.publisher[r].publish(self.parse_behavior({'action': 'move_to_pose','parameters': [self.transformation[r][correct_robot_answer]]}))
                         time.sleep(0.2)
 
+                    time.sleep(1.5)
+
                     parameter=random.choice(['Sit/Gestures/Me_7'])
                     self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
 
-                    time.sleep(0.5)
+                    time.sleep(1)
 
                     parameter = random.choice(['experimenter/12'])
                     self.publisher[3].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))

@@ -89,7 +89,7 @@ class NaoSubconscious():
         while True:
             if self.conscious_movement == False:
                 self.publisher.publish(message)
-            time_move = np.random.exponential(3)
+            time_move = np.random.exponential(5)
             time_now = time.time()
             while self.conscious_movement == False and (time.time() - time_now) < time_move:  # like sleep
                 pass

@@ -19,7 +19,10 @@ from random import shuffle, sample
 import sys
 import datetime
 from kivy.uix.dropdown import DropDown
-
+from kivy.config import Config
+# Config.set('graphics', 'width', '800')
+# Config.set('graphics', 'height', '600')
+# Config.write()
 
 
 
@@ -141,11 +144,11 @@ class ExperimentApp(App):
 
         self.next_step+=1
 
-        # if self.next_step <self.number_of_steps:
-        #     self.flow.ids['next_button'].text = 'Start Step '+str(self.step)
-        # else:
-        #     self.flow.ids['next_button'].text = 'End the Experiment'
+        if self.next_step <= self.number_of_steps:
+            self.flow.ids['next_button'].text = str("Start Step "+ str(self.next_step))
 
+        else:
+            self.flow.ids['next_button'].text = str("End the Experiment")
 
         if self.next_step -1 ==1:
             self.publisher.publish('alive')

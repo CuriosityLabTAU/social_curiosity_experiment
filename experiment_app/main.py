@@ -6,6 +6,10 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import ScreenManager, Screen
 
 from kivy_communication import *
+from kivy.config import Config
+Config.set('graphics', 'width', '1200')
+Config.set('graphics', 'height', '800')
+Config.write()
 
 
 class Start(BoxLayout):
@@ -30,7 +34,7 @@ class TabletApp(App):
     def build(self):
 
         self.the_app = self
-        self.basic_server_ip = '192.168.0.10'
+        self.basic_server_ip = '192.168.0.11'
 
         self.server_ip_end = 0
 
@@ -85,8 +89,8 @@ class TabletApp(App):
     # ==========================================================================
 
     def try_connection(self):
-        # server_ip = self.basic_server_ip + str(self.server_ip_end)
-        server_ip = '127.0.0.1'
+        server_ip = self.basic_server_ip + str(self.server_ip_end)
+        # server_ip = '127.0.0.1'
 
         KC.start(the_parents=[self], the_ip=server_ip)  # 127.0.0.1
         KL.start(mode=[DataMode.file, DataMode.communication, DataMode.ros], pathname=self.user_data_dir,

@@ -90,4 +90,4 @@ print "---------------------------probs--------------------------------------"
 probs_df=hist_prob_df.div(hist_prob_df.sum(axis=0),axis=1)
 print probs_df
 
-# probs_df.to_csv('probs_from_AMT.csv')
+probs_df.to_csv('probs_from_AMT.csv')
