@@ -89,6 +89,7 @@ class ExperimentApp(App):
         self.correct_answer_score=0
 
 
+
         ###ros
         #roscore
         # t1 = threading.Thread(target=self.worker1)
@@ -98,6 +99,10 @@ class ExperimentApp(App):
         #ros_node
         rospy.init_node('ui')
         self.publisher = rospy.Publisher('the_flow', String, queue_size=10)
+        self.publisher_alive= rospy.Publisher('alive', String, queue_size=10)
+        self.publisher_next_step= rospy.Publisher('next_step', String, queue_size=10)
+        self.publisher_stop= rospy.Publisher('stop', String, queue_size=10)
+
         # self.publisher_eye_tracking = rospy.Publisher('eye_tracking', String, queue_size=10)
 
         #
@@ -120,13 +125,17 @@ class ExperimentApp(App):
         os.system('python main.py ' + subject_id + ' ' + str_for_main)
 
     def start(self,subject_id,nao_ip_center,nao_ip_left,nao_ip_right,experimenter_ip):
-        if self.gender=='None':
+        if self.gender=='None' or self.left_robot_name=='None' or self.center_robot_name == 'None' or self.right_robot_name == 'None':
             return
 
         self.nao_info = [(nao_ip_left, '0',self.left_robot_name), (nao_ip_center, '1',self.center_robot_name), (nao_ip_right, '2',self.right_robot_name),(experimenter_ip, '3','experimenter')]
         t1 = threading.Thread(target=self.run_main, args=(subject_id, self.nao_info))
         t1.start()
+
+        rospy.Subscriber("correct_answer", String, self.update_score)
+
         threading._sleep(25)
+
 
 
         print 'here-ui'
@@ -140,10 +149,10 @@ class ExperimentApp(App):
         self.sm.current = "flow"
 
 
-    def run_dynamics(self):
+    def run_dynamics(self,step):
 
-        rospy.init_node('ui_node')
-        rospy.Subscriber("correct_answer", String, self.update_score)
+        if  step.text != "End the Experiment":
+            self.next_step=int(step.text)
 
         if self.next_step>self.number_of_steps:
             self.exit_experiment()
@@ -152,32 +161,31 @@ class ExperimentApp(App):
         self.next_step+=1
 
         if self.next_step <= self.number_of_steps:
-            self.flow.ids['next_button'].text = str("Start Step "+ str(self.next_step))
+            self.flow.ids['next_button'].text = str(self.next_step)
 
         else:
             self.flow.ids['next_button'].text = str("End the Experiment")
 
         if self.next_step -1 ==1:
-            self.publisher.publish('alive')
+            self.flow_handler('alive')
             threading._sleep(1)
-            self.publisher.publish('next_step')
+            self.flow_handler('next_step')
 
         else:
-            self.publisher.publish('next_step')
+            self.flow_handler('next_step')
 
 
-    def flow_handler(self, data):
+    def flow_handler(self,data):
 
         if data == 'alive':
             self.publisher_alive.publish('1')
 
         elif data == 'next_step':
-            self.publisher_next_step.publish('1')
+            next_step=self.next_step-2
+            self.publisher_next_step.publish(str(next_step))
 
         elif data == 'stop':
             self.publisher_stop.publish('1')
-
-
 
 
     def looking_at(self,direction):
@@ -198,7 +206,7 @@ class ExperimentApp(App):
          self.gender=_gender
 
     def exit_experiment(self):
-        self.publisher.publish('stop')
+        self.flow_handler('stop')
         self.sm.current = "stop_screen"
         #stop ros bag ~~~~~
 
@@ -237,7 +245,5 @@ class ExperimentApp(App):
 if __name__ == '__main__':
     ExperimentApp().run()
 
-#todo: iu
-#todo: basein bhavuer
-#todo: stop after bhavuer
+
 

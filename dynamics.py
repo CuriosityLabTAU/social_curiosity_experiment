@@ -26,9 +26,11 @@ class dynamics():
 
         self.last_robot=None
 
-        self.nex_robot=None
+        self.next_robot=None
 
         self.experimenter_nao=3
+
+        self.is_stop = 0
 
         self.gender=_info.split(',')[1]
 
@@ -120,46 +122,40 @@ class dynamics():
 
         self.metadata_for_experiment_steps = {
                                         0: {'matrix':self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns' :0,
+                                            'turns' :{'number':4, 'first':0,'place_of_h':[2]},
                                             'question_time':[0,1,2,3],
                                             'experimenter_before':None,
                                             'experimenter_after' :[[{'action': 'run_behavior', 'parameters':['experimenter/2_'+self.gender]},68]]},
 
                                         1: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns': 1,
+                                            'turns': {'number':8, 'first':1,'place_of_h':[3,6]},
                                             'question_time': [0,1,2,3],
                                             'experimenter_before': None,
                                             'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/3']},5]]},
 
                                         2: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns': 2,
+                                            'turns': {'number':8, 'first':2,'place_of_h':[3,6]},
                                             'question_time': [0,1,2,3],
                                             'experimenter_before': [[{'action': 'run_behavior', 'parameters':['experimenter/4']},5]],
                                             'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/3']},5]]},
 
                                         3: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns': 'h',
+                                            'turns': {'number':8, 'first':'h','place_of_h':[3,6]},
                                             'question_time': [0,1,2,3],
                                             'experimenter_before': [[{'action': 'run_behavior', 'parameters':['experimenter/4.1']},5]],
                                             'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/3']},5]]},
 
                                         4: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns': 0,
+                                            'turns': {'number':8, 'first':0,'place_of_h':[3,6]},
                                             'question_time': [0,1,2,3],
                                             'experimenter_before': [[{'action': 'run_behavior', 'parameters':['experimenter/4']},5]],
-                                            'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/3']},5]]},
-
-                                        5: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
-                                            'turns': 1,
-                                            'question_time': [0,1,2,3],
-                                            'experimenter_before': [[{'action': 'run_behavior', 'parameters':['experimenter/4.1']},5]],
                                             'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/5_'+self.gender]},10]]}}
 
         self.questions= {
-                                0: [[{'action': 'run_behavior', 'parameters': ['experimenter/7']},7]],
-                                1: [[{'action': 'run_behavior', 'parameters': ['experimenter/8']}, 6]],
-                                2: [[{'action': 'run_behavior', 'parameters': ['experimenter/9_'+self.gender]}, 5]],
-                                3: [[{'action': 'run_behavior', 'parameters': ['experimenter/10_'+self.gender]}, 5]]}
+                                0: [[{'action': 'run_behavior', 'parameters': ['experimenter/7']},6]],
+                                1: [[{'action': 'run_behavior', 'parameters': ['experimenter/8']}, 5]],
+                                2: [[{'action': 'run_behavior', 'parameters': ['experimenter/9_'+self.gender]}, 4]],
+                                3: [[{'action': 'run_behavior', 'parameters': ['experimenter/10_'+self.gender]}, 4]]}
 
         self.discrete_behaviors=sorted(self.behaviors.keys())
 
@@ -199,8 +195,13 @@ class dynamics():
         self.publisher_score = rospy.Publisher('correct_answer', String, queue_size=10)
 
 
-        rospy.Subscriber('the_flow', String, self.flow_handler)
+        # rospy.Subscriber('the_flow', String, self.flow_handler)
         rospy.Subscriber('tablet_game', String, self.update_current_answer)
+
+        rospy.Subscriber('alive', String, self.alive)
+        rospy.Subscriber('next_step', String, self.run_dynamics)
+        rospy.Subscriber('stop', String, self.stop)
+
 
         rospy.Subscriber('next_robot', String, self.update_next_robot)
         rospy.spin()
@@ -211,31 +212,28 @@ class dynamics():
     def flow_handler(self,data):
         step=data.data
 
-        if step=='alive':
-            print 'alive in dynamics'
-            for nao in range(self.number_of_naos):
-                self.publisher_alive[nao].publish(self.parse_behavior({'action': 'alive'}))
-                self.publisher_blinking[nao].publish(self.parse_behavior({'action': 'blinking'}))
+    def alive(self,data):
+        print 'alive in dynamics'
+        for nao in range(self.number_of_naos):
+            self.publisher_alive[nao].publish(self.parse_behavior({'action': 'alive'}))
+            self.publisher_blinking[nao].publish(self.parse_behavior({'action': 'blinking'}))
 
 
-        elif step== 'start':
-            print step
-            self.publisher_get_next.publish(str(0))
-
-        elif step == 'next_step':
-            print step
-            self.run_dynamics()
-
-        elif step == 'stop':
-            for nao in range(self.number_of_naos):
-                self.publisher[nao].publish(self.parse_behavior({'action': 'end_work'}))
+    def stop(self,data):
+        self.is_stop=1
+        for nao in range(self.number_of_naos):
+            self.publisher[nao].publish(self.parse_behavior({'action': 'end_work'}))
 
 
-    def run_dynamics(self):
+    def run_dynamics(self,data):
+        self.experiment_step=int(data.data)
+
         #prams for step:
         params_for_step=self.metadata_for_experiment_steps[self.experiment_step]
         self.matrix=params_for_step['matrix']
-        secondary_robots=[0,1,2]
+
+        if self.is_stop == 1:
+            return
 
         ## introduction
         introduction_prams=params_for_step['experimenter_before']
@@ -244,20 +242,29 @@ class dynamics():
             time.sleep(introduction_prams[0][1])
 
         ## main
-        for turn in range(2):
+        for turn in range(params_for_step['turns']['number']):
+            if self.is_stop==1:
+                return
+
             if turn==0:
-                main_robot = params_for_step['turns']
+                main_robot = params_for_step['turns']['first']
                 self.last_robot=main_robot
                 self.publisher_get_next.publish(str(0))
 
             else:
-                self.nex_robot= None
-                self.publisher_get_next.publish(str(self.last_robot))
+                if turn not in params_for_step['turns']['place_of_h']:
+                    self.next_robot= None
+                    self.publisher_get_next.publish(str(self.last_robot))
 
-                while self.nex_robot==None:
+                else:
+                    self.publisher_get_next.publish(str(self.last_robot))
+                    self.next_robot= 'h'
+
+
+                while self.next_robot==None:
                     pass
-                'got next robot'
-                main_robot = self.nex_robot
+
+                main_robot = self.next_robot
                 self.last_robot=main_robot
 
 
@@ -304,7 +311,7 @@ class dynamics():
 
                 time.sleep(1)
 
-            time.sleep(5)
+            time.sleep(3.5)
 
 
             for robot in [0,1,2]:
@@ -314,7 +321,7 @@ class dynamics():
                 if back_to_sit_bol[robot]==1:
                     self.publisher[robot].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['social_curiosity/back_to_sit']}))
 
-            time.sleep(5)
+            time.sleep(3.5)
 
         #question asking
         q_order=params_for_step['question_time']
@@ -328,10 +335,11 @@ class dynamics():
             self.publisher[3].publish(self.parse_behavior(end_phrase[0][0]))
             time.sleep(end_phrase[0][1])
 
-        self.experiment_step += 1
-
 
     def question_time(self,order):
+
+        if self.is_stop == 1:
+            return
 
         ## introduction
         if self.experiment_step==0:
@@ -343,6 +351,8 @@ class dynamics():
         print  'question_time'
 
         for q in order:
+            if self.is_stop == 1:
+                return
 
 
             self.current_answer = None
@@ -522,9 +532,9 @@ class dynamics():
 
     def update_next_robot(self,data):
         if data.data !='h':
-            self.nex_robot=int(data.data)
+            self.next_robot=int(data.data)
         else:
-            self.nex_robot = data.data
+            self.next_robot = data.data
 
 if len(sys.argv) > 1:
     start=dynamics((sys.argv[1]))

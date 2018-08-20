@@ -273,14 +273,23 @@
             bold: True
             on_press: app.exit_experiment()
     Widget:
-        Button:
+        TextInput:
             id:next_button
+            pos: root.width*0.70 , root.height*0.2
+            size: root.width*0.1 , root.height*0.13
+            text:"1"
+            font_size:40
+            color:0,0,0,1
+            padding: [30, (self.height-self.line_height)/2]
+
+
+        Button:
             pos: root.width*0.25 , root.height*0.2
-            size: 450, 80
-            text:'Start step 1'
+            size: 350, 80
+            text:'Start step '
             color:0,0,0,1
             font_size:40
-            on_press: app.run_dynamics()
+            on_press: app.run_dynamics(next_button)
 
 
 <stop_screen>:

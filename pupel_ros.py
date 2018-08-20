@@ -12,13 +12,20 @@ import json
 
 
 class pupel_ros():
-    def __init__(self,pos_data):
+    def __init__(self,pos_data=None):
 
         self.current_position = 'None'
         self.current_status   = False
 
         #info
-        self.pos_dict = json.loads(pos_data)
+        if pos_data is None:
+            self.pos_dict = {
+                'Which': 0,
+                'Howie': 1,
+                'Where': 2
+            }
+        else:
+            self.pos_dict = json.loads(pos_data)
         self.position = {0: 'left', 1: 'center', 2: 'right'}
 
 
@@ -64,16 +71,15 @@ class pupel_ros():
                 current_status = message['gaze_on_srf'][0]['on_srf']
 
                 if current_position != self.current_position or current_status!=self.current_status:
-                    # print message['name'], ":", message['gaze_on_srf'][0]['on_srf']
+                    # print message['name'], ":", message['gaze_on_srf'][0]['on_srf'], type(current_status)
+                    # else:
+                    #     self.publisher_eye_tracking.publish('None')
 
                     self.current_position=current_position
                     self.current_status  =current_status
 
-                    if current_status==True:
+                    if current_status:
                         self.publisher_eye_tracking.publish(str(self.position[int(self.pos_dict[current_position])]))
-
-                    else:
-                        self.publisher_eye_tracking.publish('None')
 
             except:
                 all
@@ -82,3 +88,5 @@ class pupel_ros():
 
 if len(sys.argv) > 1:
     start=pupel_ros(sys.argv[1])
+else:
+    start = pupel_ros()

@@ -44,7 +44,7 @@ def start_working(subject_id, nao_info):
             dict_to_pass[nao_info[i][2]]=nao_info[i][1]
         str_to_pass=json.dumps(dict_to_pass)
 
-
+        print('worker 5', str_to_pass)
         os.system('python pupel_ros.py' + ' ' +"'"+str_to_pass+"'")
 
     def worker6():
@@ -93,16 +93,16 @@ def start_working(subject_id, nao_info):
     threading._sleep(0.2)
 
     t5 = threading.Thread(target=worker5)
-    # t5.start()
-    # threading._sleep(0.2)
+    t5.start()
+    threading._sleep(0.2)
 
     t6 = threading.Thread(target=worker6)
     t6.start()
     threading._sleep(0.2)
 
     t7 = threading.Thread(target=worker7)
-    # t7.start()
-    # threading._sleep(0.2)
+    t7.start()
+    threading._sleep(0.2)
 
 if len(sys.argv) > 1:
     print('sys.argv', sys.argv)
