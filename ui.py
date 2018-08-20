@@ -35,6 +35,7 @@ class Calibration_screen(BoxLayout):
 
 class Flow(BoxLayout):
     next_button=ObjectProperty()
+    score=ObjectProperty()
 
     pass
 
@@ -85,6 +86,8 @@ class ExperimentApp(App):
 
         self.next_step=1
         self.number_of_steps=6
+        self.correct_answer_score=0
+
 
         ###ros
         #roscore
@@ -129,7 +132,7 @@ class ExperimentApp(App):
         print 'here-ui'
 
 
-        self.sm.current = "calibration_screen"
+        self.sm.current = "flow"
 
 
     def calibration(self):
@@ -138,6 +141,10 @@ class ExperimentApp(App):
 
 
     def run_dynamics(self):
+
+        rospy.init_node('ui_node')
+        rospy.Subscriber("correct_answer", String, self.update_score)
+
         if self.next_step>self.number_of_steps:
             self.exit_experiment()
             return
@@ -157,6 +164,18 @@ class ExperimentApp(App):
 
         else:
             self.publisher.publish('next_step')
+
+
+    def flow_handler(self, data):
+
+        if data == 'alive':
+            self.publisher_alive.publish('1')
+
+        elif data == 'next_step':
+            self.publisher_next_step.publish('1')
+
+        elif data == 'stop':
+            self.publisher_stop.publish('1')
 
 
 
@@ -183,8 +202,9 @@ class ExperimentApp(App):
         self.sm.current = "stop_screen"
         #stop ros bag ~~~~~
 
-
-
+    def update_score(self,data):
+        self.correct_answer_score+=1
+        self.flow.ids['score'].text = str("Correct answer score: " + str(self.correct_answer_score))
 
     def worker1(self):
         os.system('roscore')

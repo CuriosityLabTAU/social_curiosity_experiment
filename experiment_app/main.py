@@ -34,9 +34,9 @@ class TabletApp(App):
     def build(self):
 
         self.the_app = self
-        self.basic_server_ip = '192.168.0.11'
+        self.basic_server_ip = '192.168.0.'
 
-        self.server_ip_end = 0
+        self.server_ip_end = 100
 
         self.strat_screen = Start()
         self.wait_screen = Wait()
@@ -99,7 +99,7 @@ class TabletApp(App):
     def failed_connection(self):
         print("failed_connection", self.server_ip_end)
         self.server_ip_end += 1
-        if self.server_ip_end < 10:
+        if self.server_ip_end < 120:
             self.try_connection()
         else:
            self.screen_manager.get_screen('ScreenRegister').ids['callback_label'].text = 'stand alone ' + str(self.server_ip_end)
@@ -143,6 +143,7 @@ class TabletApp(App):
     # ==========================================================================
 
     def start(self):
+        # self.sm.current = "wait_screen"
         if KC.client.status == True:
             self.sm.current = "wait_screen"
 

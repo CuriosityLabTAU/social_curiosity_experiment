@@ -242,11 +242,22 @@
 
 <flow>:
     next_button:next_button
+    score:score
     Widget:
         Label:
             pos: root.width*0.4 , root.height*0.9
             size: root.width*0.2 , root.height*0.08
             text:'Flow screen'
+            font_size:30
+            color:0,0,0,1
+            size_hint_y:0.2
+
+    Widget:
+        Label:
+            id:score
+            pos: root.width*0.4 , root.height*0.6
+            size: root.width*0.2 , root.height*0.08
+            text:'Correct answer score: 0'
             font_size:30
             color:0,0,0,1
             size_hint_y:0.2

@@ -196,6 +196,8 @@ class dynamics():
 
 
         self.publisher_get_next = rospy.Publisher('get_next', String, queue_size=10)
+        self.publisher_score = rospy.Publisher('correct_answer', String, queue_size=10)
+
 
         rospy.Subscriber('the_flow', String, self.flow_handler)
         rospy.Subscriber('tablet_game', String, self.update_current_answer)
@@ -372,6 +374,7 @@ class dynamics():
 
             #answer time
             if self.current_answer==correct_robot_answer:
+                self.publisher_score.publish('correct')
                 parameter=random.choice(['Sit/Gestures/Me_7'])
                 self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
                 time.sleep(2)
@@ -397,7 +400,7 @@ class dynamics():
                     self.publisher[correct_robot_answer].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': [parameter]}))
                     self.publisher[self.current_answer].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(-1)]}))
 
-                    time.sleep(1)
+                    time.sleep(2)
 
 
                     parameter = random.choice(['experimenter/12', 'experimenter/12_' + self.gender])

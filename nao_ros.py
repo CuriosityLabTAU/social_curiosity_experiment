@@ -361,13 +361,13 @@ class NaoNode():
 
         if self.node_name != '3':
             # Sitdown
-            self.postureProxy.goToPosture("Sit", 1.0)
+            self.postureProxy.goToPosture("Sit", 5.0)
 
             # sound back
             self.audioplayerProxy.setMasterVolume(0.8)
 
         else:
-            self.postureProxy.goToPosture("Crouch", 1.0)
+            self.postureProxy.goToPosture("Crouch", 5.0)
 
         # rest
         self.rest()
