@@ -23,6 +23,8 @@ class next_robot():
         rospy.init_node('next_robot')
 
         self.publisher_next=rospy.Publisher('next_robot', String, queue_size=10)
+        self.publisher_log= rospy.Publisher('log', String, queue_size=10)
+
 
         rospy.Subscriber('get_next', String, self.choose_next_robot)
         rospy.Subscriber('eye_tracking', String, self.update_next_robot)
@@ -60,6 +62,11 @@ class next_robot():
 
 
     def choose_next_robot(self, data):
+
+        if data.data=='reset':
+            self.next_robot_data = {'left': 0, 'center': 0, 'right': 0}
+            return
+
 
         if data.data!="h":
             last_robot=int(data.data)
@@ -108,12 +115,12 @@ class next_robot():
         # if next_robot=='3':
         #     next_robot='h'
         # print 'mext robot```````````````````:', next_robot
-        if self.counter % 4==0:
-            chosen_robot='h'
-        self.counter+=1
+        # if self.counter % 4==0:
+        #     chosen_robot='h'
+        # self.counter+=1
 
         self.publisher_next.publish(str(chosen_robot))
-
+        self.publisher_log.publish('robot_counts:'+str(robot_counts))
         # return self.position.keys()[self.position.values().index(chosen_robot)]
 
 

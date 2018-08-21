@@ -122,6 +122,9 @@ class ExperimentApp(App):
         self.publisher_alive= rospy.Publisher('alive', String, queue_size=10)
         self.publisher_next_step= rospy.Publisher('next_step', String, queue_size=10)
         self.publisher_stop= rospy.Publisher('stop', String, queue_size=10)
+        self.publisher_log= rospy.Publisher('log', String, queue_size=10)
+
+
 
         # self.publisher_eye_tracking = rospy.Publisher('eye_tracking', String, queue_size=10)
 
@@ -185,11 +188,11 @@ class ExperimentApp(App):
             json.dump(self.cinfig_hist_data, outfile)
 
         t1 = threading.Thread(target=self.run_main, args=(subject_id, self.nao_info))
-        # t1.start()
-        #
-        # rospy.Subscriber("correct_answer", String, self.update_score)
-        #
-        # threading._sleep(25)
+        t1.start()
+
+        rospy.Subscriber("correct_answer", String, self.update_score)
+
+        threading._sleep(25)
 
 
 

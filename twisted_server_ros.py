@@ -34,6 +34,9 @@ class EchoFactory(protocol.Factory):
 
 from kivy.app import App
 from kivy.uix.label import Label
+from kivy.core.window import Window
+
+Window.size = (10, 10)
 
 
 class TwistedServerApp(App):

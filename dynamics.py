@@ -8,8 +8,7 @@ import json
 import random
 import pandas as pd
 from numpy.random import choice
-from random import shuffle
-
+from random import shuffle,randint
 
 
 # from nao_ros import NaoNode
@@ -193,6 +192,8 @@ class dynamics():
 
         self.publisher_get_next = rospy.Publisher('get_next', String, queue_size=10)
         self.publisher_score = rospy.Publisher('correct_answer', String, queue_size=10)
+        self.publisher_log= rospy.Publisher('log', String, queue_size=10)
+
 
 
         # rospy.Subscriber('the_flow', String, self.flow_handler)
@@ -221,12 +222,16 @@ class dynamics():
 
     def stop(self,data):
         self.is_stop=1
+        self.publisher_log.publish('experiment_stop')
+
         for nao in range(self.number_of_naos):
             self.publisher[nao].publish(self.parse_behavior({'action': 'end_work'}))
 
 
     def run_dynamics(self,data):
         self.experiment_step=int(data.data)
+        self.publisher_log.publish('start:'+str(self.experiment_step))
+
 
         #prams for step:
         params_for_step=self.metadata_for_experiment_steps[self.experiment_step]
@@ -241,15 +246,19 @@ class dynamics():
             self.publisher[3].publish(self.parse_behavior(introduction_prams[0][0]))
             time.sleep(introduction_prams[0][1])
 
+        time.sleep(2.5)
+
         ## main
         for turn in range(params_for_step['turns']['number']):
+            self.publisher_log.publish('turn:'+str(turn)+':start')
+
             if self.is_stop==1:
                 return
 
             if turn==0:
                 main_robot = params_for_step['turns']['first']
                 self.last_robot=main_robot
-                self.publisher_get_next.publish(str(0))
+                self.publisher_get_next.publish('reset')
 
             else:
                 if turn not in params_for_step['turns']['place_of_h']:
@@ -257,7 +266,7 @@ class dynamics():
                     self.publisher_get_next.publish(str(self.last_robot))
 
                 else:
-                    self.publisher_get_next.publish(str(self.last_robot))
+                    self.publisher_get_next.publish('reset')
                     self.next_robot= 'h'
 
 
@@ -267,6 +276,7 @@ class dynamics():
                 main_robot = self.next_robot
                 self.last_robot=main_robot
 
+            self.publisher_log.publish('turn:'+str(turn)+':start:main:'+str(main_robot))
 
 
             secondary_robots = [0, 1, 2]
@@ -279,15 +289,17 @@ class dynamics():
 
             #main robot - main behavior
             if main_robot!='h':
-                self.publisher[main_robot].publish(self.parse_behavior({'action':'run_behavior','parameters':['social_curiosity/talk/1']}))
+                behavior_n=randint(1, 4)
+                self.publisher[main_robot].publish(self.parse_behavior({'action':'run_behavior','parameters':['social_curiosity/talk/'+str(behavior_n)]}))
                 self.publisher[main_robot].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(1.0)]}))
+                self.publisher_log.publish('main:behavior:' + str(behavior_n))
 
             #secondary_robots look at main robot
             for robot in secondary_robots:
                 time.sleep(1)
                 self.publisher[robot].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[robot][main_robot]]}))
 
-            time.sleep(9)
+            time.sleep(8)
 
             #secondary_robots look at main behaviour
             if main_robot=='h':
@@ -305,14 +317,17 @@ class dynamics():
 
                 self.publisher[robot].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(relationship)]}))
                 self.publisher[robot].publish(self.parse_behavior(behavior))
+                self.publisher_log.publish('secondary:'+str(robot)+'behavior:' + str(behavior['parameters']+':relationship:'+str(relationship)))
 
-                if behavior in [{'action': 'run_behavior', 'parameters': ['social_curiosity/neutral']}]:
+
+                if behavior in [{'action': 'run_behavior', 'parameters': ['social_curiosity/neutral']},{'action': 'run_behavior', 'parameters': ['social_curiosity/right_lean_back']},{'action': 'run_behavior', 'parameters': ['social_curiosity/left_lean_back']}]:
                     back_to_sit_bol[robot]=1
 
-                time.sleep(1)
+                time.sleep(1.5)
 
-            time.sleep(3.5)
+            time.sleep(4)
 
+            self.publisher_log.publish('all:back_to_sit')
 
             for robot in [0,1,2]:
                 # change_current_relationship
@@ -324,23 +339,36 @@ class dynamics():
                     self.publisher[robot].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['social_curiosity/back_to_sit_2']}))
 
 
-            time.sleep(3.5)
+            time.sleep(2.5)
 
         #sit befor questions
         for robot in [0, 1, 2]:
             self.publisher[robot].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['social_curiosity/back_to_sit_2']}))
 
+
+
         #question asking
         q_order=params_for_step['question_time']
         if params_for_step['question_time'] !=None:
+            self.publisher_log.publish('question:start')
+
             self.question_time(q_order)
 
+            self.publisher_log.publish('question:end')
+
+        if self.is_stop == 1:
+            return
+
+        for robot in [0, 1, 2]:
+            self.publisher[robot].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['social_curiosity/back_to_sit_2']}))
 
         ## end phrase
         end_phrase = params_for_step['experimenter_after']
         if end_phrase != None:
             self.publisher[3].publish(self.parse_behavior(end_phrase[0][0]))
             time.sleep(end_phrase[0][1])
+
+        self.publisher_log.publish('end:'+str(self.experiment_step))
 
 
     def question_time(self,order):
@@ -368,6 +396,8 @@ class dynamics():
             question=self.questions[q]
             correct_robot_answer=self.correct_robot_answer(self.matrix,q)
 
+            self.publisher_log.publish('question:start:'+str(q))
+
             # experimenter ask question:
             self.publisher[3].publish(self.parse_behavior(question[0][0]))
             time.sleep(question[0][1])
@@ -383,7 +413,8 @@ class dynamics():
 
             while self.current_answer ==None:
                 pass
-            print self.current_answer ==None
+
+            self.publisher_log.publish('question:answer:'+str(self.current_answer)+':correct:'+str(correct_robot_answer))
 
             for robot in [0,1,2]:
                 self.publisher[robot].publish(self.parse_behavior({'action': 'change_current_relationship', 'parameters': [str(-1)]}))
