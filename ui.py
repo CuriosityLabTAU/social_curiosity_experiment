@@ -1,8 +1,10 @@
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
+from kivy.uix.behaviors import ToggleButtonBehavior
+
 from kivy.uix.screenmanager import ScreenManager, Screen
-from kivy.properties import ObjectProperty
+from kivy.properties import ObjectProperty,StringProperty
 from kivy.core.window import Window
 from kivy.graphics import Color
 from kivy.uix.widget import Widget
@@ -28,7 +30,25 @@ from kivy.config import Config
 
 
 class Config(BoxLayout):
-    pass
+    experimenter_ip=ObjectProperty()
+    nao_ip_center=ObjectProperty()
+    nao_ip_right=ObjectProperty()
+    nao_ip_left=ObjectProperty()
+
+    nao_ip_center_Howie=ObjectProperty()
+    nao_ip_center_Where=ObjectProperty()
+    nao_ip_center_Which=ObjectProperty()
+
+
+    nao_ip_left_Howie = ObjectProperty()
+    nao_ip_left_Where = ObjectProperty()
+    nao_ip_left_Which = ObjectProperty()
+
+
+    nao_ip_right_Howie = ObjectProperty()
+    nao_ip_right_Where = ObjectProperty()
+    nao_ip_right_Which = ObjectProperty()
+
 
 class Calibration_screen(BoxLayout):
     pass
@@ -85,7 +105,7 @@ class ExperimentApp(App):
         self.sm.add_widget(screen)
 
         self.next_step=1
-        self.number_of_steps=6
+        self.number_of_steps=5
         self.correct_answer_score=0
 
 
@@ -105,11 +125,39 @@ class ExperimentApp(App):
 
         # self.publisher_eye_tracking = rospy.Publisher('eye_tracking', String, queue_size=10)
 
-        #
-        self.left_robot_name  ='None'
-        self.center_robot_name='None'
-        self.right_robot_name ='None'
-        self.gender='None'
+
+
+        #get config data from last run
+        try:
+            with open('cinfig_hist_data.json') as data_file:
+                self.cinfig_hist_data = json.load(data_file)
+        except:
+            'IOError'
+            self.cinfig_hist_data = {'nao_ip_experimenter': '192.168.0.', 'nao_ip_left': '192.168.0.',
+                                'nao_ip_right': '192.168.0.', 'nao_ip_center': '192.168.0.',
+                                'nao_name_left': 'Howie', 'nao_name_right': 'Which', 'nao_name_center': 'Where'}
+
+
+#
+        self.left_robot_name = self.cinfig_hist_data['nao_name_left']
+        self.center_robot_name = self.cinfig_hist_data['nao_name_center']
+        self.right_robot_name = self.cinfig_hist_data['nao_name_right']
+        self.gender = 'None'
+
+
+
+        self.config.ids['experimenter_ip'].text = self.cinfig_hist_data['nao_ip_experimenter']
+        self.config.ids['nao_ip_center'].text = self.cinfig_hist_data['nao_ip_center']
+        self.config.ids['nao_ip_right'].text = self.cinfig_hist_data['nao_ip_right']
+        self.config.ids['nao_ip_left'].text = self.cinfig_hist_data['nao_ip_left']
+
+        self.config.ids['nao_ip_center_'+self.cinfig_hist_data['nao_name_center']].state = 'down'
+        self.config.ids['nao_ip_right_'+self.cinfig_hist_data['nao_name_right']].state   = 'down'
+        self.config.ids['nao_ip_left_'+self.cinfig_hist_data['nao_name_left']].state     = 'down'
+
+
+
+
 
         return self.sm
 
@@ -129,12 +177,19 @@ class ExperimentApp(App):
             return
 
         self.nao_info = [(nao_ip_left, '0',self.left_robot_name), (nao_ip_center, '1',self.center_robot_name), (nao_ip_right, '2',self.right_robot_name),(experimenter_ip, '3','experimenter')]
+        self.cinfig_hist_data = {'nao_ip_experimenter': experimenter_ip, 'nao_ip_left': nao_ip_left,
+                                 'nao_ip_right': nao_ip_right, 'nao_ip_center': nao_ip_center,
+                                 'nao_name_left': self.left_robot_name, 'nao_name_right': self.right_robot_name, 'nao_name_center': self.center_robot_name}
+
+        with open('cinfig_hist_data.json', 'w') as outfile:
+            json.dump(self.cinfig_hist_data, outfile)
+
         t1 = threading.Thread(target=self.run_main, args=(subject_id, self.nao_info))
-        t1.start()
-
-        rospy.Subscriber("correct_answer", String, self.update_score)
-
-        threading._sleep(25)
+        # t1.start()
+        #
+        # rospy.Subscriber("correct_answer", String, self.update_score)
+        #
+        # threading._sleep(25)
 
 
 
@@ -151,7 +206,7 @@ class ExperimentApp(App):
 
     def run_dynamics(self,step):
 
-        if  step.text != "End the Experiment":
+        if  step.text != "End":
             self.next_step=int(step.text)
 
         if self.next_step>self.number_of_steps:
@@ -164,7 +219,7 @@ class ExperimentApp(App):
             self.flow.ids['next_button'].text = str(self.next_step)
 
         else:
-            self.flow.ids['next_button'].text = str("End the Experiment")
+            self.flow.ids['next_button'].text = str("End")
 
         if self.next_step -1 ==1:
             self.flow_handler('alive')

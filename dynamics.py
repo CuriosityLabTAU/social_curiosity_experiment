@@ -121,31 +121,31 @@ class dynamics():
                         "right":  [{'action':'look_down'}]}}
 
         self.metadata_for_experiment_steps = {
-                                        0: {'matrix':self.bin_matrix(np.random.rand(3, 4)),
+                                        0: {'matrix':self.bin_matrix(np.array([[0 , 0.7 , 0.9 , 0.9],[0.9 , 0  ,0.1  ,0.5],[0.7,0.1,0,0.1]])),
                                             'turns' :{'number':4, 'first':0,'place_of_h':[2]},
                                             'question_time':[0,1,2,3],
                                             'experimenter_before':None,
                                             'experimenter_after' :[[{'action': 'run_behavior', 'parameters':['experimenter/2_'+self.gender]},68]]},
 
-                                        1: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
+                                        1: {'matrix': self.bin_matrix(np.array([[0 , 0.75 , 0.45 , 0.1],[0.9 , 0  ,0.15  ,0.5],[0.6, 0.3 ,0, 0.9]])),
                                             'turns': {'number':8, 'first':1,'place_of_h':[3,6]},
                                             'question_time': [0,1,2,3],
                                             'experimenter_before': None,
                                             'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/3']},5]]},
 
-                                        2: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
+                                        2: {'matrix': self.bin_matrix(np.array([[0 , 0.9 , 0.15 , 0.5],[0.75 , 0  ,0.45  ,0.9],[0.3, 0.6, 0, 0.1]])),
                                             'turns': {'number':8, 'first':2,'place_of_h':[3,6]},
                                             'question_time': [0,1,2,3],
                                             'experimenter_before': [[{'action': 'run_behavior', 'parameters':['experimenter/4']},5]],
                                             'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/3']},5]]},
 
-                                        3: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
+                                        3: {'matrix': self.bin_matrix(np.array([[0 , 0.45 , 0.75 , 0.5],[0.6 , 0  ,0.3  ,0.1], [0.9, 0.15, 0 , 0.9]])),
                                             'turns': {'number':8, 'first':'h','place_of_h':[3,6]},
                                             'question_time': [0,1,2,3],
                                             'experimenter_before': [[{'action': 'run_behavior', 'parameters':['experimenter/4.1']},5]],
                                             'experimenter_after': [[{'action': 'run_behavior', 'parameters':['experimenter/3']},5]]},
 
-                                        4: {'matrix': self.bin_matrix(np.random.rand(3, 4)),
+                                        4: {'matrix': self.bin_matrix(np.array([[0 , 0.3 , 0.6 , 0.9],[0.15 , 0  ,0.9  ,0.1],[0.45 , 0.75 , 0 ,0.5]])),
                                             'turns': {'number':8, 'first':0,'place_of_h':[3,6]},
                                             'question_time': [0,1,2,3],
                                             'experimenter_before': [[{'action': 'run_behavior', 'parameters':['experimenter/4']},5]],
@@ -320,8 +320,15 @@ class dynamics():
                 #go to sit
                 if back_to_sit_bol[robot]==1:
                     self.publisher[robot].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['social_curiosity/back_to_sit']}))
+                else:
+                    self.publisher[robot].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['social_curiosity/back_to_sit_2']}))
+
 
             time.sleep(3.5)
+
+        #sit befor questions
+        for robot in [0, 1, 2]:
+            self.publisher[robot].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['social_curiosity/back_to_sit_2']}))
 
         #question asking
         q_order=params_for_step['question_time']
