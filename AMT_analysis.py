@@ -53,7 +53,7 @@ AMT_data=AMT_data.div(100)
 number_of_bins=9
 
 plt.figure()
-hist=AMT_data.hist(bins=number_of_bins)
+hist=AMT_data.hist(bins=number_of_bins,xlabelsize=15,ylabelsize=15)
 plt.show()
 
 
@@ -66,8 +66,6 @@ shape=AMT_data.count()
 print "------------------------AMT_data_bin--------------------------------------------"
 
 for i in list(AMT_data):
-    print AMT_data[i]
-    print i
     AMT_data[i] = pd.cut(AMT_data[i], bins=bins, labels=labels,include_lowest=True)
 print AMT_data
 
