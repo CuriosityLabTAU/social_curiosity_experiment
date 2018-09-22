@@ -69,18 +69,18 @@ def start_working(subject_id, nao_info):
     t1 = threading.Thread(target=worker1)
     # t1.start()
     # threading._sleep(0.2)
-
-    for nao in nao_info:
-        print 'nao' + str(nao)
-        t22 = threading.Thread(target=worker22, args=(nao,))
-        t22.start()
-        threading._sleep(2.5)
-
-    for nao in nao_info:
-        print 'nao'+str(nao)
-        t2 = threading.Thread(target=worker2,args=(nao,))
-        t2.start()
-        threading._sleep(2.5)
+    #
+    # for nao in nao_info:
+    #     print 'nao' + str(nao)
+    #     t22 = threading.Thread(target=worker22, args=(nao,))
+    #     t22.start()
+    #     threading._sleep(2.5)
+    #
+    # for nao in nao_info:
+    #     print 'nao'+str(nao)
+    #     t2 = threading.Thread(target=worker2,args=(nao,))
+    #     t2.start()
+    #     threading._sleep(2.5)
 
 
 

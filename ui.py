@@ -56,6 +56,8 @@ class Calibration_screen(BoxLayout):
 class Flow(BoxLayout):
     next_button=ObjectProperty()
     score=ObjectProperty()
+    pupil_count=ObjectProperty()
+
 
     pass
 
@@ -107,14 +109,16 @@ class ExperimentApp(App):
         self.next_step=1
         self.number_of_steps=5
         self.correct_answer_score=0
+        self.pupil_count=0
 
 
 
-        ###ros
-        #roscore
-        # t1 = threading.Thread(target=self.worker1)
-        # t1.start()
-        # threading._sleep(0.2)
+
+        ##ros
+        # roscore
+        t1 = threading.Thread(target=self.worker1)
+        t1.start()
+        threading._sleep(0.2)
 
         #ros_node
         rospy.init_node('ui')
@@ -123,10 +127,6 @@ class ExperimentApp(App):
         self.publisher_next_step= rospy.Publisher('next_step', String, queue_size=10)
         self.publisher_stop= rospy.Publisher('stop', String, queue_size=10)
         self.publisher_log= rospy.Publisher('log', String, queue_size=10)
-
-
-
-        # self.publisher_eye_tracking = rospy.Publisher('eye_tracking', String, queue_size=10)
 
 
 
@@ -195,6 +195,8 @@ class ExperimentApp(App):
         threading._sleep(25)
 
 
+        rospy.Subscriber('eye_tracking', String,self.update_pupil_work)
+
 
         print 'here-ui'
 
@@ -208,6 +210,7 @@ class ExperimentApp(App):
 
 
     def run_dynamics(self,step):
+        self.reset_pupil_count()
 
         if  step.text != "End":
             self.next_step=int(step.text)
@@ -240,6 +243,7 @@ class ExperimentApp(App):
 
         elif data == 'next_step':
             next_step=self.next_step-2
+            print "start step:" +str(next_step)
             self.publisher_next_step.publish(str(next_step))
 
         elif data == 'stop':
@@ -271,6 +275,17 @@ class ExperimentApp(App):
     def update_score(self,data):
         self.correct_answer_score+=1
         self.flow.ids['score'].text = str("Correct answer score: " + str(self.correct_answer_score))
+
+    def update_pupil_work(self,data):
+        self.pupil_count+=1
+        self.flow.ids['pupil_count'].text = str("Pupil count: " + str(self.pupil_count))
+
+    def reset_pupil_count(self):
+        self.pupil_count=0
+        self.flow.ids['pupil_count'].text = str("Pupil count: " + str(self.pupil_count))
+
+
+
 
     def worker1(self):
         os.system('roscore')

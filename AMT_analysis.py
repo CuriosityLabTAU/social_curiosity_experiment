@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-AMT_data=pd.read_csv('AMT_row.csv')
+AMT_data=pd.read_csv('AMT_row_2.csv')
 #preprocessing:
 columns= ['Duration (in seconds)','Finished','RecordedDate','Q1.2','Q1.3','Q1.4','Q1.5','Q0_11','Q1_11','Q2_11','Q3_11','Q4_11','Q5_11',
           'Q6_11','Q7_11','Q8_11','Q9_11','Q10_11','Q11_11','Q12_11','Q13_11','Q14_11','validation_11']
@@ -31,7 +31,6 @@ AMT_data=AMT_data[AMT_data.agree_to_participate=='Agree']
 #validation
 AMT_data=AMT_data[AMT_data.validation==0]
 AMT_data=AMT_data[AMT_data.duration >180] #more then 3 min
-
 
 ######################################################################################
 # AMT data for analysis:

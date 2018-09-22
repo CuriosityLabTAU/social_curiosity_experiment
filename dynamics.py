@@ -229,6 +229,7 @@ class dynamics():
 
 
     def run_dynamics(self,data):
+        print 'dynamics' + str(data.data)
         self.experiment_step=int(data.data)
         self.publisher_log.publish('start:'+str(self.experiment_step))
 
@@ -317,7 +318,7 @@ class dynamics():
 
                 self.publisher[robot].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(relationship)]}))
                 self.publisher[robot].publish(self.parse_behavior(behavior))
-                self.publisher_log.publish('secondary:'+str(robot)+'behavior:' + str(behavior['parameters']+':relationship:'+str(relationship)))
+                self.publisher_log.publish('secondary:'+str(robot)+'behavior:' + str(self.parse_behavior(behavior)+':relationship:'+str(relationship)))
 
 
                 if behavior in [{'action': 'run_behavior', 'parameters': ['social_curiosity/neutral']},{'action': 'run_behavior', 'parameters': ['social_curiosity/right_lean_back']},{'action': 'run_behavior', 'parameters': ['social_curiosity/left_lean_back']}]:

@@ -275,6 +275,7 @@
 <flow>:
     next_button:next_button
     score:score
+    pupil_count:pupil_count
     Widget:
         Label:
             pos: root.width*0.4 , root.height*0.9
@@ -293,6 +294,30 @@
             font_size:30
             color:0,0,0,1
             size_hint_y:0.2
+
+    Widget:
+        Label:
+            id:pupil_count
+            pos: root.width*0.4 , root.height*0.5
+            size: root.width*0.2 , root.height*0.08
+            text:'Pupil count: 0'
+            font_size:30
+            color:0,0,0,1
+            size_hint_y:0.2
+
+    Widget:
+        Button:
+            pos: root.width*0.7 , root.height*0.5
+            size: root.width*0.09 , root.height*0.08
+            size_hint_y:0.08
+            text:"reset"
+            color:0,0,0,1
+            background_color:1,1,0,1
+            font_size:20
+            bold: True
+            on_press: app.reset_pupil_count()
+
+
 
     Widget:
         Button:
