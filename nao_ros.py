@@ -88,8 +88,9 @@ class NaoNode():
             self.postureProxy.goToPosture("Sit", 1.0)
             self.leds.off("ChestLeds")
 
-        else:
-            self.postureProxy.goToPosture("Stand", 1.0)
+        # else:
+        #     time.sleep(1.5)
+        #     self.postureProxy.goToPosture("Stand", 1.0)
 
 
         #wake_up
