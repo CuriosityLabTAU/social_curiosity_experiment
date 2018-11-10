@@ -45,9 +45,9 @@ class dynamics():
 
         self.behaviors={
                         0:{
-                        "left"  :[{'action':'run_behavior','parameters':['social_curiosity2/close_hands']}],
-                        "center":[{'action':'run_behavior','parameters':['social_curiosity2/close_hands']}],
-                        "right" :[{'action':'run_behavior','parameters':['social_curiosity2/close_hands']}]},
+                        "left"  :[{'action':'run_behavior','parameters':['social_curiosity/close_hands']}],
+                        "center":[{'action':'run_behavior','parameters':['social_curiosity/close_hands']}],
+                        "right" :[{'action':'run_behavior','parameters':['social_curiosity/close_hands']}]},
 
                         1: {
                         "left":   [{'action': 'look_to_other_way', 'parameters': ['left']}],
@@ -60,14 +60,14 @@ class dynamics():
                         "right": [{'action': 'disagree'}]},
 
                         3: {
-                        "left":   [{'action': 'run_behavior', 'parameters': ['social_curiosity2/scratching']}],
-                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity2/scratching']}],
-                        "right":  [{'action': 'run_behavior', 'parameters': ['social_curiosity2/scratching']}]},
+                        "left":   [{'action': 'run_behavior', 'parameters': ['social_curiosity/neutral']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/neutral']}],
+                        "right":  [{'action': 'run_behavior', 'parameters': ['social_curiosity/neutral']}]},
 
                         4: {
-                        "left":   [{'action':'open_hands'}],
-                        "center": [{'action':'open_hands'}],
-                        "right":  [{'action':'open_hands'}]},
+                        "left":   [{'action': 'move_to_pose', 'parameters': ['left']}],
+                        "center": [{'action': 'move_to_pose', 'parameters': ['center']}],
+                        "right":  [{'action': 'move_to_pose', 'parameters': ['right']}]},
 
                         5:{
                         "left"  :[{'action':'agree'}],
@@ -75,54 +75,49 @@ class dynamics():
                         "right" :[{'action':'agree'}]},
 
                         6:{
-                        "left":   [{'action': 'run_behavior', 'parameters': ['social_curiosity2/right_forward']}],
-                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity2/center_forward']}],
-                        "right":  [{'action': 'run_behavior', 'parameters': ['social_curiosity2/left_forward']}]},
+                        "left":   [{'action': 'run_behavior', 'parameters': ['social_curiosity/open_hands']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/open_hands']}],
+                        "right":  [{'action': 'run_behavior', 'parameters': ['social_curiosity/open_hands']}]},
 
                         7:{
-                        "left"  :[{'action': 'run_behavior', 'parameters': ['social_curiosity2/right_reaching']}],
-                        "center":[{'action': 'run_behavior', 'parameters': ['social_curiosity2/center_reaching']}],
-                        "right" :[{'action': 'run_behavior', 'parameters': ['social_curiosity2/left_reaching']}]},
+                        "left"  :[{'action': 'run_behavior', 'parameters': ['social_curiosity/right_forward']}],
+                        "center":[{'action': 'run_behavior', 'parameters': ['social_curiosity/center_forward']}],
+                        "right" :[{'action': 'run_behavior', 'parameters': ['social_curiosity/left_forward']}]},
 
                         8:{
-                        "left":   [{'action':'hands_on_hips'}],
-                        "center": [{'action':'hands_on_hips'}],
-                        "right":  [{'action':'hands_on_hips'}]},
+                        "left": [{'action': 'run_behavior', 'parameters': ['social_curiosity/hate_left']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/hate_center']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['social_curiosity/hate_center']}]},
 
                         9:{
-                        "left": [{'action': 'run_behavior', 'parameters': ['social_curiosity2/clapping']}],
-                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity2/clapping']}],
-                        "right": [{'action': 'run_behavior', 'parameters': ['social_curiosity2/clapping']}]},
+                        "left": [{'action': 'run_behavior', 'parameters': ['social_curiosity/right_hand_behind_head_left']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/left_hand_behind_head_center']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['social_curiosity/left_hand_behind_head_right']}]},
 
                         10:{
-                        "left": [{'action': 'run_behavior', 'parameters': ['social_curiosity2/shrugging']}],
-                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity2/shrugging']}],
-                        "right": [{'action': 'run_behavior', 'parameters': ['social_curiosity2/shrugging']}]},
+                        "left": [{'action': 'run_behavior', 'parameters': ['social_curiosity/left_lean_back']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/center_hand_lean_forward']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['social_curiosity/right_lean_back']}]},
 
                         11:{
-                        "left": [{'action': 'run_behavior', 'parameters': ['social_curiosity2/cover_eyes']}],
-                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity2/cover_eyes']}],
-                        "right": [{'action': 'run_behavior', 'parameters': ['social_curiosity2/cover_eyes']}]},
+                        "left": [{'action': 'run_behavior', 'parameters': ['social_curiosity/left_hand_random']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/right_hand_random']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['social_curiosity/right_hand_random']}]},
 
                         12:{
-                        "left": [{'action': 'run_behavior', 'parameters': ['social_curiosity2/make_fist']}],
-                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity2/make_fist']}],
-                        "right": [{'action': 'run_behavior', 'parameters': ['social_curiosity2/make_fist']}]},
+                        "left": [{'action': 'run_behavior', 'parameters': ['social_curiosity/right_hand_random']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/left_hand_random']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['social_curiosity/left_hand_random']}]},
 
                         13:{
-                        "left": [{'action': 'run_behavior', 'parameters': ['social_curiosity2/point_right']}],
-                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity2/point_center']}],
-                        "right": [{'action': 'run_behavior', 'parameters': ['social_curiosity2/point_left']}]},
+                        "left": [{'action': 'run_behavior', 'parameters': ['social_curiosity/hate_2']}],
+                        "center": [{'action': 'run_behavior', 'parameters': ['social_curiosity/hate_2']}],
+                        "right": [{'action': 'run_behavior', 'parameters': ['social_curiosity/hate_2']}]},
 
-                        14: {
-                            "left": [{'action': 'look_up'}],
-                            "center": [{'action': 'look_up'}],
-                            "right": [{'action': 'look_up'}]},
-
-                        15: {
-                            "left": [{'action': 'look_down'}],
-                            "center": [{'action': 'look_down'}],
-                            "right": [{'action': 'look_down'}]}}
+                        14:{
+                        "left":   [{'action':'look_down'}],
+                        "center": [{'action':'look_down'}],
+                        "right":  [{'action':'look_down'}]}}
 
         self.metadata_for_experiment_steps = {
                                         0: {'matrix':self.bin_matrix(np.array([[0 , 0.7 , 0.9 , 0.9],[0.9 , 0  ,0.1  ,0.5],[0.7,0.1,0,0.1]])),
@@ -234,11 +229,6 @@ class dynamics():
 
 
     def run_dynamics(self,data):
-        #for AMT movies:
-        if data.data == 'AMT':
-            self.run_dynamics_for_AMT(data)
-            return
-
         print 'dynamics' + str(data.data)
         self.experiment_step=int(data.data)
         self.publisher_log.publish('start:'+str(self.experiment_step))
@@ -301,7 +291,7 @@ class dynamics():
             #main robot - main behavior
             if main_robot!='h':
                 behavior_n=randint(1, 4)
-                self.publisher[main_robot].publish(self.parse_behavior({'action':'run_behavior','parameters':['social_curiosity2/talk/'+str(behavior_n)]}))
+                self.publisher[main_robot].publish(self.parse_behavior({'action':'run_behavior','parameters':['social_curiosity/talk/'+str(behavior_n)]}))
                 self.publisher[main_robot].publish(self.parse_behavior({'action':'change_current_relationship','parameters':[str(1.0)]}))
                 self.publisher_log.publish('main:behavior:' + str(behavior_n))
 
@@ -331,7 +321,7 @@ class dynamics():
                 self.publisher_log.publish('secondary:'+str(robot)+'behavior:' + str(self.parse_behavior(behavior)+':relationship:'+str(relationship)))
 
 
-                if behavior in [{'action': 'run_behavior', 'parameters': ['social_curiosity2/neutral']},{'action': 'run_behavior', 'parameters': ['social_curiosity2/right_lean_back']},{'action': 'run_behavior', 'parameters': ['social_curiosity2/left_lean_back']}]:
+                if behavior in [{'action': 'run_behavior', 'parameters': ['social_curiosity/neutral']},{'action': 'run_behavior', 'parameters': ['social_curiosity/right_lean_back']},{'action': 'run_behavior', 'parameters': ['social_curiosity/left_lean_back']}]:
                     back_to_sit_bol[robot]=1
 
                 time.sleep(1.5)
@@ -345,16 +335,16 @@ class dynamics():
                 self.publisher[robot].publish(self.parse_behavior({'action': 'change_current_relationship', 'parameters': [str(-1.0)]}))
                 #go to sit
                 if back_to_sit_bol[robot]==1:
-                    self.publisher[robot].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['social_curiosity2/back_to_sit']}))
+                    self.publisher[robot].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['social_curiosity/back_to_sit']}))
                 else:
-                    self.publisher[robot].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['social_curiosity2/back_to_sit_2']}))
+                    self.publisher[robot].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['social_curiosity/back_to_sit_2']}))
 
 
             time.sleep(2.5)
 
         #sit befor questions
         for robot in [0, 1, 2]:
-            self.publisher[robot].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['social_curiosity2/back_to_sit_2']}))
+            self.publisher[robot].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['social_curiosity/back_to_sit_2']}))
 
 
 
@@ -371,7 +361,7 @@ class dynamics():
             return
 
         for robot in [0, 1, 2]:
-            self.publisher[robot].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['social_curiosity2/back_to_sit_2']}))
+            self.publisher[robot].publish(self.parse_behavior({'action': 'run_behavior', 'parameters': ['social_curiosity/back_to_sit_2']}))
 
         ## end phrase
         end_phrase = params_for_step['experimenter_after']
@@ -507,13 +497,13 @@ class dynamics():
         robots = [0, 1]
 
 
-        for i in range(15,16):
+        for i in range(15):
 
-            # secondary_robots look at main robot
-            self.publisher[0].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[0][1]]}))
-            time.sleep(1.5)
-
-            self.publisher[1].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[1][0]]}))
+            # # secondary_robots look at main robot
+            # self.publisher[0].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[0][1]]}))
+            # time.sleep(1.5)
+            #
+            # self.publisher[1].publish(self.parse_behavior({'action': 'move_to_pose', 'parameters': [self.transformation[1][0]]}))
 
             time.sleep(3)
 
@@ -521,8 +511,8 @@ class dynamics():
             direction_for_behavior = self.transformation[1][0]
 
             behavior = self.behaviors[i][direction_for_behavior][0]
-            self.publisher[1].publish(self.parse_behavior(behavior))
-            # self.publisher[1].publish(self.parse_behavior({'action': 'look_up'}))
+            # self.publisher[1].publish(self.parse_behavior(behavior))
+            self.publisher[1].publish(self.parse_behavior({'action': 'look_up'}))
 
 
             print i

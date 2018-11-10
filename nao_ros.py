@@ -99,7 +99,7 @@ class NaoNode():
         robot_name=self.systemProxy.robotName()
 
 
-        # #ros:
+        #ros:
         rospy.init_node('nao_listener'+self.node_name)
         name='to_nao_subconscious_'+self.node_name
         self.publisher= rospy.Publisher('angles', String, queue_size=10)
@@ -259,12 +259,12 @@ class NaoNode():
         basepose_HeadPitch = angles[1]
 
         if relative_to == "right":
-            self.change_pose_util('HeadYaw,HeadPitch;' + str(basepose_HeadYaw + 1.18) + ',' + str(basepose_HeadPitch - 0.2) + ';0.18')
+            self.change_pose_util('HeadYaw,HeadPitch;' + str(basepose_HeadYaw + 1.18) + ',' + str(basepose_HeadPitch - 0.2) + ';0.08')
         elif relative_to == "center":
             sign = random.choice((-1, 1))
-            self.change_pose_util('HeadYaw,HeadPitch;' + str(basepose_HeadYaw + sign * (0.4)) + ',' + str(basepose_HeadPitch + 0.25) + ';0.18')
+            self.change_pose_util('HeadYaw,HeadPitch;' + str(basepose_HeadYaw + sign * (0.4)) + ',' + str(basepose_HeadPitch + 0.2) + ';0.08')
         elif relative_to == "left":
-            self.change_pose_util('HeadYaw,HeadPitch;' + str(basepose_HeadYaw - 1.18) + ',' + str(basepose_HeadPitch - 0.2) + ';0.18')
+            self.change_pose_util('HeadYaw,HeadPitch;' + str(basepose_HeadYaw - 1.18) + ',' + str(basepose_HeadPitch - 0.2) + ';0.08')
 
         self.back_to_live()
 
@@ -272,28 +272,13 @@ class NaoNode():
         counter = 0
         angles=self.motionProxy.getAngles("Body", True)
         basepose = angles[1]
-
-        for i in range(1, 5):
-            self.change_pose_util('HeadPitch;' + str(basepose + 0.3 / i) + ';' + str(0.16))
-            time.sleep(0.3)
-            self.change_pose_util('HeadPitch;' + str(basepose - 0.15 / i) + ';' + str(0.14))
-            time.sleep(0.3)
-        self.change_pose_util('HeadPitch;' + str(basepose+0.05) + ';0.05')
-
-        self.back_to_live()
-
-    def open_hands(self):
-        self.managerProxy.post.runBehavior('social_curiosity2/open_hands')
-        counter = 0
-        angles = self.motionProxy.getAngles("Body", True)
-        basepose = angles[1]
-
-        for i in range(1, 5):
-            self.change_pose_util('HeadPitch;' + str(basepose + 0.3 / i) + ';' + str(0.16))
-            time.sleep(0.3)
-            self.change_pose_util('HeadPitch;' + str(basepose - 0.15 / i) + ';' + str(0.14))
-            time.sleep(0.3)
-        self.change_pose_util('HeadPitch;' + str(basepose + 0.05) + ';0.05')
+        while counter < 3:
+            self.change_pose_util('HeadPitch;' + str(basepose + 0.2) + ';0.08')
+            time.sleep(0.5)
+            self.change_pose_util('HeadPitch;' + str(basepose - 0.2) + ';0.08')
+            time.sleep(0.5)
+            self.change_pose_util('HeadPitch;' + str(basepose) + ';0.08')
+            counter += 1
 
         self.back_to_live()
 
@@ -322,28 +307,14 @@ class NaoNode():
         angles=self.motionProxy.getAngles("Body", True)
         basepose = angles[0]
         print basepose
-        for i in range(1,5):
-            self.change_pose_util('HeadYaw;' + str(basepose + 0.3/i) + ';'+str(0.16-0.000*i))
-            time.sleep(0.3)
-            self.change_pose_util('HeadYaw;' + str(basepose - 0.3/i) + ';'+str(0.16-0.000*i))
-            time.sleep(0.3)
+        while counter < 3:
+            self.change_pose_util('HeadYaw;' + str(basepose + 0.2) + ';0.08')
+            time.sleep(0.5)
+            self.change_pose_util('HeadYaw;' + str(basepose - 0.2) + ';0.08')
+            time.sleep(0.5)
+            self.change_pose_util('HeadYaw;' + str(basepose) + ';0.08')
+            counter += 1
 
-        self.change_pose_util('HeadYaw;' + str(basepose) + ';0.1')
-        self.back_to_live()
-
-    def hands_on_hips(self):
-        self.managerProxy.post.runBehavior('social_curiosity2/hands_on_hips')
-        counter = 0
-        angles = self.motionProxy.getAngles("Body", True)
-        basepose = angles[0]
-        print basepose
-        for i in range(1, 5):
-            self.change_pose_util('HeadYaw;' + str(basepose + 0.3 / i) + ';' + str(0.16 - 0.000 * i))
-            time.sleep(0.3)
-            self.change_pose_util('HeadYaw;' + str(basepose - 0.3 / i) + ';' + str(0.16 - 0.000 * i))
-            time.sleep(0.3)
-
-        self.change_pose_util('HeadYaw;' + str(basepose) + ';0.1')
         self.back_to_live()
 
     def blink(self):
@@ -354,14 +325,6 @@ class NaoNode():
         self.leds.on("leds2")
         self.leds.on("leds1")
 
-
-    def negative_eyes(self):
-        self.leds.off("leds1")
-        self.leds.off("leds2")
-        self.leds.off("leds3")
-        self.leds.on("leds3")
-        self.leds.on("leds2")
-        self.leds.on("leds1")
 
     def close_eyes(self):
         rDuration = 0.75
@@ -377,9 +340,6 @@ class NaoNode():
         self.leds.on("leds3")
         self.leds.on("leds2")
         self.leds.on("leds1")
-
-
-
 
     def move_head_naturally(self,_current_relationship):
         current_relationship=float(_current_relationship[0])
@@ -413,12 +373,9 @@ class NaoNode():
         # rest
         self.rest()
 
-strat=NaoNode(sys.argv[1],sys.argv[2])
+strat=NaoNode(sys.argv[1],sys.argv[2])  #FOR TEST!!!!!!!!!!
 
 #
-# strat=NaoNode('192.168.0.100','left')  #FOR TEST!!!!!!!!!!
-# strat.move_to_pose(['center'])                      #FOR TEST!!!!!!!!!!
-# strat.open_hands()                      #FOR TEST!!!!!!!!!!
-
+# strat=NaoNode('192.168.0.102','left')  #FOR TEST!!!!!!!!!!
 
 
